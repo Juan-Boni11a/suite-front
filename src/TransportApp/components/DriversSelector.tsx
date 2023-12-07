@@ -34,6 +34,7 @@ function DriversSelector({ setSomeValues, handleDriversModal }: any) {
 
     function confirmSelect() {
         setSomeValues('driver', selectedDriver.fullName)
+        setSomeValues('ci', selectedDriver.ci)
         handleDriversModal()
     }
 
