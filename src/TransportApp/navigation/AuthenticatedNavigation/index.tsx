@@ -5,6 +5,7 @@ import { Layout } from "antd";
 
 import { SideBar } from "../../components/Sidebar";
 import MovilizationOrderPage from "../../pages/MotilizationOrder";
+import SolicitudTransportPage from "../../pages/SolicitudTransport";
 import { AuthContext } from "../../../context/AuthContext";
 
 
@@ -25,6 +26,7 @@ const AuthenticatedNavigation = () => {
           <Routes>
             <Route path="" element={<WelcomePage />} />
             <Route path="movilizationOrders" element={<MovilizationOrderPage />} />
+            <Route path="solicitudTransport" element={<SolicitudTransportPage />} />
           </Routes>
         </SideBar>
       </Layout>
