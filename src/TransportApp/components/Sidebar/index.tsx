@@ -37,11 +37,18 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
                 Orden de movilización
             </Menu.Item>
             <Menu.Item
-                key="1"
+                key="2"
                 className="navbar-brand"
                 onClick={() => goToPage("/transports/solicitudTransport")}
             >
                 Solicitud de Transporte
+            </Menu.Item>
+            <Menu.Item
+                key="3"
+                className="navbar-brand"
+                onClick={() => goToPage("/transports/abastecimientoCombustible")}
+            >
+                Abastecimiento de Combustible
             </Menu.Item>
         </Menu>
     );
