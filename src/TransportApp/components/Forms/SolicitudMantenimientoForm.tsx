@@ -1,8 +1,12 @@
-import { Button, DatePicker, Form, Input, Modal, Select, Typography } from "antd";
+import { Button, Radio, DatePicker, Form, Input, Modal, Select, Typography } from "antd";
 import DriversSelector from "../DriversSelector";
 import { useState } from "react";
 import CarsSelector from "../CarsSelector";
 import MantenimientoSelector from "../MantenimientoSelector";
+import dayjs from 'dayjs';
+import 'dayjs/locale/es'; // o la configuración regional que necesites
+
+dayjs.locale('es'); // o la configuración regional que necesites
 
 
 const users = [
@@ -11,30 +15,9 @@ const users = [
 ]
 
 const activities = [
-    { label: 'Ingreso de datos', key: 1, value: 1 }
-]
-
-
-const movilizationTypes = [
-    { label: 'Autoridad', key: 1, value: 1 },
-    { label: 'De patio', key: 1, value: 2 }
-]
-
-const userTypes = [
-    { label: 'Conductor', key: 1, value: 1 },
-    { label: 'Funcionario', key: 1, value: 2 },
-    { label: 'Funcionario y conductor', key: 1, value: 3 }
-]
-
-const vigenceTypes = [
-    { label: 'Lunes a Viernes', key: 1, value: 1 },
-    { label: 'Lunes a Domingo', key: 1, value: 2 }
-]
-
-const places = [
-    { label: 'Quito', key: 1, value: 1 },
-    { label: 'Guayaquil', key: 1, value: 2 },
-    { label: 'Cuenca', key: 1, value: 3 }
+    { label: 'Aprobar', key: 1, value: 1 },
+    { label: 'Aprobar y Enviar a Taller', key: 2, value: 2 },
+    { label: 'Rechazar', key: 3, value: 3 }
 ]
 
 
@@ -131,6 +114,33 @@ function SolicitudMantenimientoForm() {
                 <Input onClick={handleMantenimientoModal} />
             </Form.Item>
 
+            <Form.Item label="Tipo de trabajo" name="">
+                <Radio.Group >
+                    <Radio value={1}>Preventivo</Radio>
+                    <Radio value={2}>Correctivo</Radio>
+                </Radio.Group>
+            </Form.Item>
+
+            <Form.Item label="Actividades" name="">
+                <Radio.Group >
+                    <Radio value={1}>Pulido</Radio>
+                    <Radio value={2}>Cambio de llantas</Radio>
+                    <Radio value={3}>Recarga de baterías</Radio>
+                </Radio.Group>
+            </Form.Item>
+
+            <Typography.Text>Código de barra</Typography.Text>
+            <br />
+            <Button type="primary">Generar código</Button>
+            <br />
+            <br />
+            <Form.Item label="Acciones a tomar">
+                <Select options={activities} />
+            </Form.Item>
+
+            <Form.Item label="Acciones disponibles">
+                <Select options={actions} />
+            </Form.Item>
 
             <Modal open={showDriversModal} footer={null} title="Máster de Conductores" onCancel={handleDriversModal}>
                 <DriversSelector setSomeValues={setSomeValues} handleDriversModal={handleDriversModal} />
