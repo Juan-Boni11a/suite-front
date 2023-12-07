@@ -2,6 +2,7 @@ import { Button, DatePicker, Form, Input, Modal, Select, Typography } from "antd
 import DriversSelector from "../DriversSelector";
 import { useState } from "react";
 import CarsSelector from "../CarsSelector";
+import MantenimientoSelector from "../MantenimientoSelector";
 
 
 const users = [
@@ -53,6 +54,8 @@ function SolicitudMantenimientoForm() {
 
     const [showCarsModal, setShowCarsModal] = useState(false)
 
+    const [showMantenimientoModal, setShowMantenimientoModal] = useState(false)
+
 
     function handleDriversModal() {
         setShowDriversModal(!showDriversModal)
@@ -61,6 +64,12 @@ function SolicitudMantenimientoForm() {
     function handleCarsModal() {
         setShowCarsModal(!showCarsModal)
     }
+
+    function handleMantenimientoModal() {
+        setShowMantenimientoModal(!showMantenimientoModal)
+    }
+
+
 
     function setSomeValues(key: string, value: any) {
         form.setFieldsValue({ [key]: value });
@@ -76,27 +85,16 @@ function SolicitudMantenimientoForm() {
                 <Select options={activities} />
             </Form.Item>
 
-
             <Form.Item label="Responsable actual">
                 <Select options={users} />
             </Form.Item>
 
-            <Form.Item label="Tipo de movilización">
-                <Select options={movilizationTypes} />
+            <Form.Item label="Fecha de mantenimiento" name="">
+                <DatePicker />
             </Form.Item>
 
-
-            <Form.Item label="Para">
-                <Select options={userTypes} />
-            </Form.Item>
-
-
-            <Form.Item label="Vigente de">
-                <Select options={vigenceTypes} />
-            </Form.Item>
-
-            <Form.Item label="Conductor" name="driver">
-                <Input onClick={handleDriversModal} />
+            <Form.Item label="Hora de mantenimiento" name="">
+                <DatePicker picker="time" />
             </Form.Item>
 
             <Typography.Text>Vehículo</Typography.Text>
@@ -115,54 +113,24 @@ function SolicitudMantenimientoForm() {
             <Form.Item label="Motor" name="engine">
                 <Input disabled />
             </Form.Item>
-            <Form.Item label="No. Matrícula" name="enrollment">
+            <Form.Item label="Kilometraje" name="enrollment">
                 <Input disabled />
             </Form.Item>
 
 
-            <Typography.Text>Datos de Emisión</Typography.Text>
-
-            <Form.Item label="Lugar" name="emitPlace">
-                <Select options={places} />
+            <Typography.Text>Conductor</Typography.Text>
+            <Form.Item label="Nombre completo" name="driver">
+                <Input onClick={handleDriversModal} />
             </Form.Item>
 
-            <Form.Item label="Fecha" name="emitDate">
-                <DatePicker />
+            <Form.Item label="Cedula" name="ci">
+                <Input disabled/>
+            </Form.Item>
+            
+            <Form.Item label="Estacion de servicio" name="nombreMantenimiento">
+                <Input onClick={handleMantenimientoModal} />
             </Form.Item>
 
-            <Form.Item label="Hora" name="emitHour">
-                <DatePicker picker="time" />
-            </Form.Item>
-
-
-            <Typography.Text>Datos de Caducidad</Typography.Text>
-
-            <Form.Item label="Lugar" name="expiryPlace">
-                <Select options={places} />
-            </Form.Item>
-
-            <Form.Item label="Fecha" name="expiryDate">
-                <DatePicker />
-            </Form.Item>
-
-            <Form.Item label="Hora" name="expiryHour">
-                <DatePicker picker="time" />
-            </Form.Item>
-
-
-            <Form.Item label="Comentarios" name="comments">
-                <Input.TextArea rows={6} />
-            </Form.Item>
-
-
-            <Form.Item label="Persona autorizada" name="autorizedPerson">
-                <Select options={users} />
-            </Form.Item>
-
-
-            <Form.Item label="Acciones disponibles">
-                <Select options={actions} />
-            </Form.Item>
 
             <Modal open={showDriversModal} footer={null} title="Máster de Conductores" onCancel={handleDriversModal}>
                 <DriversSelector setSomeValues={setSomeValues} handleDriversModal={handleDriversModal} />
@@ -170,6 +138,10 @@ function SolicitudMantenimientoForm() {
 
             <Modal open={showCarsModal} footer={null} title="Vehículos" onCancel={handleCarsModal}>
                 <CarsSelector setSomeValues={setSomeValues} handleCarsModal={handleCarsModal} />
+            </Modal>
+
+            <Modal open={showMantenimientoModal} footer={null} title="Estacion de servicio de Mantenimiento" onCancel={handleMantenimientoModal}>
+                <MantenimientoSelector setSomeValues={setSomeValues} handleMantenimientoModal={handleMantenimientoModal} />
             </Modal>
         </Form>
     )
