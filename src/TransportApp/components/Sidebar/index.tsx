@@ -57,6 +57,13 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
             >
                 Solicitud de Mantenimiento
             </Menu.Item>
+            <Menu.Item
+                key="5"
+                className="navbar-brand"
+                onClick={() => goToPage("/transports/registroSalidaMecanica")}
+            >
+                Registro de Salida de Mecanica
+            </Menu.Item>
         </Menu>
     );
 };
