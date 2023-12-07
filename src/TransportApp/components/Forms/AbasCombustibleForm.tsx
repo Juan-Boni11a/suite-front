@@ -1,4 +1,5 @@
-import { Button, DatePicker, InputNumber, Form, Input, Modal, Select, Typography, Radio } from "antd";
+import { Button, DatePicker, InputNumber, Form, Input, Modal, Select, Typography, Radio, Upload} from "antd";
+import { UploadOutlined } from '@ant-design/icons';
 import DriversSelector from "../DriversSelector";
 import { useState } from "react";
 import CarsSelector from "../CarsSelector";
@@ -13,30 +14,6 @@ const users = [
 const activities = [
     { label: 'Registro y validacion de datos', key: 1, value: 1 }
 ]
-
-
-const movilizationTypes = [
-    { label: 'Autoridad', key: 1, value: 1 },
-    { label: 'De patio', key: 1, value: 2 }
-]
-
-const userTypes = [
-    { label: 'Conductor', key: 1, value: 1 },
-    { label: 'Funcionario', key: 1, value: 2 },
-    { label: 'Funcionario y conductor', key: 1, value: 3 }
-]
-
-const vigenceTypes = [
-    { label: 'Lunes a Viernes', key: 1, value: 1 },
-    { label: 'Lunes a Domingo', key: 1, value: 2 }
-]
-
-const places = [
-    { label: 'Quito', key: 1, value: 1 },
-    { label: 'Guayaquil', key: 1, value: 2 },
-    { label: 'Cuenca', key: 1, value: 3 }
-]
-
 
 const actions = [
     {  label: 'Cerrar', value: 1},
@@ -73,8 +50,6 @@ function AbasCombustibleForm() {
     function handleAbasModal() {
         setShowAbasModal(!showAbasModal)
     }
-
-
 
     function setSomeValues(key: string, value: any) {
         form.setFieldsValue({ [key]: value });
@@ -193,7 +168,16 @@ function AbasCombustibleForm() {
                 <Select options={actions} />
             </Form.Item>
 
-
+            <Form.Item label="TotalReal" name="total">
+                <InputNumber
+                formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                min={1} defaultValue={10.34}/>
+            </Form.Item>
+            <Form.Item label="Factura de gastos">
+                <Upload>
+                    <Button icon={<UploadOutlined />}>Adjuntar Factura</Button>
+                </Upload>
+            </Form.Item>
             <Modal open={showDriversModal} footer={null} title="Máster de Conductores" onCancel={handleDriversModal}>
                 <DriversSelector setSomeValues={setSomeValues} handleDriversModal={handleDriversModal} />
             </Modal>
