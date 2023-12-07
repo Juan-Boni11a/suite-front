@@ -15,16 +15,24 @@ const cars = [
     { plate: 'PQT-123', brand: 'Nissan', model: 'Sentra', color: 'Amarillo', engine: 'ABC-111', enrollment: '34455' }
 ]
 
-function CarsSelector({ setSomeValues, handleCarsModal }: any) {
+function CarsSelector({ setSomeValues, handleCarsModal, vehicles }: any) {
 
-    const [searchResults, setSearchResults] = useState<any>([])
+    const [searchResults, setSearchResults] = useState<any>(vehicles)
 
     const [selectedCar, setSelectedCar] = useState<any>(null)
 
 
 
     function handleFinish(values: any) {
-        const filteredDrivers = cars.filter((driver: any) => driver.plate.includes(values.searchParam))
+        let filteredDrivers = []
+        if(values.searchType===1){
+            filteredDrivers = vehicles.filter((driver: any) => driver.plate.includes(values.searchParam))
+        }
+
+        if(values.searchType===2){
+            filteredDrivers = vehicles.filter((driver: any) => driver.brand.includes(values.searchParam))
+        }
+
         setSearchResults(filteredDrivers)
     }
 

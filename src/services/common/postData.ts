@@ -2,7 +2,7 @@ export function postData(endPoint:string, data:any){
     let headers = localStorage.getItem("token") !== undefined ?
     {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem("token"),
+        'Authorization': localStorage.getItem("token"),
         'mode': 'no-cors'
     }
     :

@@ -8,21 +8,32 @@ const searchTypes = [
 
 ]
 
+/*
 const drivers = [
     { fullName: 'Juan Pérez', status: 'Disponible', ci: '1727215822', ciExpiry: '15/02/2024' },
     { fullName: 'Luis Roa', status: 'No Disponible', ci: '1025215822', ciExpiry: '20/12/2024' }
 ]
+*/
+function DriversSelector({ setSomeValues, handleDriversModal, drivers }: any) {
 
-function DriversSelector({ setSomeValues, handleDriversModal }: any) {
-
-    const [searchResults, setSearchResults] = useState<any>([])
+    const [searchResults, setSearchResults] = useState<any>(drivers)
 
     const [selectedDriver, setSelectedDriver] = useState<any>(null)
 
 
 
     function handleFinish(values: any) {
-        const filteredDrivers = drivers.filter((driver: any) => driver.fullName.includes(values.searchParam))
+        
+        let filteredDrivers = drivers;
+        
+        if(values.searchType===1){
+            filteredDrivers = drivers.filter((driver: any) => driver.fullName.includes(values.searchParam))
+        }
+
+        if(values.searchType===2){
+            filteredDrivers = drivers.filter((driver: any) => driver.ci.includes(values.searchParam))
+        }
+        
         setSearchResults(filteredDrivers)
     }
 
