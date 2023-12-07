@@ -50,6 +50,13 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
             >
                 Abastecimiento de Combustible
             </Menu.Item>
+            <Menu.Item
+                key="4"
+                className="navbar-brand"
+                onClick={() => goToPage("/transports/solicitudMantenimiento")}
+            >
+                Solicitud de Mantenimiento
+            </Menu.Item>
         </Menu>
     );
 };
