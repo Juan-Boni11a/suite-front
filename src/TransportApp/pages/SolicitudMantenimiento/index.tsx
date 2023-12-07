@@ -48,7 +48,7 @@ const SolicitudMantenimientoPage = () => {
 
     return (
         <div>
-            <Card title="Solicitud de orden de movilización">
+            <Card title="Solicitud de orden de mantenimiento">
                 <SolicitudManetenimientoForm />
             </Card>
         </div>
