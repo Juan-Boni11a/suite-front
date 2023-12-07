@@ -47,17 +47,14 @@ function AbasSelector({ setSomeValues, handleAbasModal }: any) {
 
     function handleFinish(values: any) {
         const { searchParam, searchType } = values;
-    
-        // Filtra las estaciones basándose en la opción de búsqueda seleccionada
+
         const filteredAbas = estaciones.filter((estacion: any) => {
             if (searchType === 1) {
-                // Búsqueda por nombre
                 return estacion.nameAbas.includes(searchParam);
             } else if (searchType === 2) {
-                // Búsqueda por ciudad
                 return estacion.ciudad.includes(searchParam);
             }
-            return true; // Si no hay opción válida, devuelve todas las estaciones
+            return true; 
         });
     
         setSearchResults(filteredAbas);
@@ -65,8 +62,8 @@ function AbasSelector({ setSomeValues, handleAbasModal }: any) {
     
 
 
-    function handleSelectDriver(driver: any) {
-        setselectedAbas(driver)
+    function handleSelectAbas(abas: any) {
+        setselectedAbas(abas)
     }
 
     function confirmSelect() {
@@ -100,7 +97,7 @@ function AbasSelector({ setSomeValues, handleAbasModal }: any) {
                             pagination={false}
                             dataSource={searchResults}
                             renderItem={(item: any, index) => (
-                                <List.Item onClick={() => handleSelectDriver(item)} >
+                                <List.Item onClick={() => handleSelectAbas(item)} >
                                     <List.Item.Meta
                                         title={<label >{item.nameAbas}</label>}
                                     />
