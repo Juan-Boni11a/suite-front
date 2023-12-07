@@ -91,15 +91,15 @@ function SolicitudTransportForm() {
                 <Input />
             </Form.Item>
 
-            <Form.Item label="Duración aproximada" name="duracion aproximada">
+            <Form.Item label="Duración aproximada" name="aproxDuration">
                 <DatePicker picker="time" />
             </Form.Item>
             
-            <Form.Item label="Actividad" name="duracion aproximada">
+            <Form.Item label="Actividad" name="activity">
                 <TextArea />
             </Form.Item>
 
-            <Form.Item label="Ocupa todo el tiempo" name="duracion aproximada">
+            <Form.Item label="Ocupa todo el tiempo" name="allTime">
                 <Radio.Group >
                     <Radio value={1}>Si</Radio>
                     <Radio value={2}>No</Radio>

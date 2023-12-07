@@ -53,6 +53,11 @@ function SolicitudMantenimientoForm() {
         form.setFieldsValue({ [key]: value });
     }
 
+    /*const onChangeWorkType = (e: any) => {
+        console.log('radio checked', e.target.value);
+    };
+    */
+
     return (
         <Form form={form}>
             <Form.Item label="Iniciador">
@@ -109,14 +114,14 @@ function SolicitudMantenimientoForm() {
                 <Input onClick={handleMantenimientoModal} />
             </Form.Item>
 
-            <Form.Item label="Tipo de trabajo" name="">
-                <Radio.Group >
+            <Form.Item label="Tipo de trabajo" name="workType">
+                <Radio.Group /*onChange={onChangeWorkType}*/ >
                     <Radio value={1}>Preventivo</Radio>
                     <Radio value={2}>Correctivo</Radio>
                 </Radio.Group>
             </Form.Item>
 
-            <Form.Item label="Actividades" name="">
+            <Form.Item label="Actividades" name="activities">
                 <Radio.Group >
                     <Radio value={1}>Pulido</Radio>
                     <Radio value={2}>Cambio de llantas</Radio>
