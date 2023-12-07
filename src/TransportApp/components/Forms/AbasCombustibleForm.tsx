@@ -108,7 +108,7 @@ function AbasCombustibleForm() {
                 <Input onClick={handleDriversModal} />
             </Form.Item>
 
-            <Form.Item label="Cedula" name="ci">
+            <Form.Item label="Cédula" name="ci">
                 <Input disabled/>
             </Form.Item>
 
@@ -150,7 +150,7 @@ function AbasCombustibleForm() {
             <br />
             <br />
             <Typography.Text>Detalles del abastecimiento</Typography.Text>
-            <Form.Item label="Estacion de Servicio" name="nameAbas">
+            <Form.Item label="Estación de Servicio" name="nameAbas">
                 <Input onClick={handleAbasModal} />
             </Form.Item>
 
@@ -173,14 +173,14 @@ function AbasCombustibleForm() {
                 <InputNumber min={1} defaultValue={0}/>
             </Form.Item>
 
-            <Form.Item label="total" name="total">
+            <Form.Item label="Total" name="total">
                 <InputNumber
                 formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                 min={1} defaultValue={10.34}/>
             </Form.Item>
 
 
-            <Typography.Text>Codigo de barra</Typography.Text>
+            <Typography.Text>Código de barra</Typography.Text>
             <br />
             <Button type="primary">Generar código</Button>
             <br />

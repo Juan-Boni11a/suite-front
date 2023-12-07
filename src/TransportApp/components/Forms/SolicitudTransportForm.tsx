@@ -83,7 +83,7 @@ function SolicitudTransportForm() {
                 <Input disabled/>
             </Form.Item>
 
-            <Form.Item label="Numero de acompañantes" name="numAcompañantes">
+            <Form.Item label="Número de acompañantes" name="numAcompañantes">
                 <InputNumber min={1}  defaultValue={1}/>
             </Form.Item>
 
@@ -91,7 +91,7 @@ function SolicitudTransportForm() {
                 <Input />
             </Form.Item>
 
-            <Form.Item label="Duracion aproximada" name="duracion aproximada">
+            <Form.Item label="Duración aproximada" name="duracion aproximada">
                 <DatePicker picker="time" />
             </Form.Item>
             
@@ -99,7 +99,7 @@ function SolicitudTransportForm() {
                 <TextArea />
             </Form.Item>
 
-            <Form.Item label="Actividad" name="duracion aproximada">
+            <Form.Item label="Ocupa todo el tiempo" name="duracion aproximada">
                 <Radio.Group >
                     <Radio value={1}>Si</Radio>
                     <Radio value={2}>No</Radio>
