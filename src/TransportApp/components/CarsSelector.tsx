@@ -3,7 +3,7 @@ import { useState } from 'react'
 
 
 const searchTypes = [
-    { label: 'Plca', value: 1 },
+    { label: 'Placa', value: 1 },
     { label: 'Marca', value: 2 },
 
 ]
