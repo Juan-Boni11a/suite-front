@@ -36,6 +36,13 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
             >
                 Orden de movilización
             </Menu.Item>
+            <Menu.Item
+                key="1"
+                className="navbar-brand"
+                onClick={() => goToPage("/transports/solicitudTransport")}
+            >
+                Solicitud de Transporte
+            </Menu.Item>
         </Menu>
     );
 };
