@@ -7,6 +7,7 @@ import { SideBar } from "../../components/Sidebar";
 import MovilizationOrderPage from "../../pages/MotilizationOrder";
 import SolicitudTransportPage from "../../pages/SolicitudTransport";
 import AbastecimientoCombustiblePage from "../../pages/AbastecimientoCombustible/";
+import SolicitudMantenimientoPage from "../../pages/SolicitudMantenimiento/";
 import { AuthContext } from "../../../context/AuthContext";
 
 
@@ -29,6 +30,8 @@ const AuthenticatedNavigation = () => {
             <Route path="movilizationOrders" element={<MovilizationOrderPage />} />
             <Route path="solicitudTransport" element={<SolicitudTransportPage />} />
             <Route path="abastecimientoCombustible" element={<AbastecimientoCombustiblePage />} />
+            <Route path="solicitudMantenimiento" element={<SolicitudMantenimientoPage />} />
+
           </Routes>
         </SideBar>
       </Layout>
