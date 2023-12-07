@@ -6,6 +6,7 @@ import { Layout } from "antd";
 import { SideBar } from "../../components/Sidebar";
 import MovilizationOrderPage from "../../pages/MotilizationOrder";
 import SolicitudTransportPage from "../../pages/SolicitudTransport";
+import AbastecimientoCombustiblePage from "../../pages/AbastecimientoCombustible/";
 import { AuthContext } from "../../../context/AuthContext";
 
 
@@ -27,6 +28,7 @@ const AuthenticatedNavigation = () => {
             <Route path="" element={<WelcomePage />} />
             <Route path="movilizationOrders" element={<MovilizationOrderPage />} />
             <Route path="solicitudTransport" element={<SolicitudTransportPage />} />
+            <Route path="abastecimientoCombustible" element={<AbastecimientoCombustiblePage />} />
           </Routes>
         </SideBar>
       </Layout>
