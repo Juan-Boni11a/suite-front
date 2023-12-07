@@ -3,11 +3,6 @@ import DriversSelector from "../DriversSelector";
 import { useState } from "react";
 import CarsSelector from "../CarsSelector";
 import MantenimientoSelector from "../MantenimientoSelector";
-import dayjs from 'dayjs';
-import 'dayjs/locale/es'; // o la configuración regional que necesites
-
-dayjs.locale('es'); // o la configuración regional que necesites
-
 
 const users = [
     { label: 'Admin', key: 1, value: 1 },
