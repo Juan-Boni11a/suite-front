@@ -23,7 +23,11 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
 
     console.log('user', user)
 
-    const isSuperAdmin = user.roles.filter((role: any) => role.id === 1)
+    // const isSuperAdmin = user.roles.filter((role: any) => role.id === 1)
+    const isSuperAdmin = {email: '1'}
+
+    console.log(isSuperAdmin);
+
 
 
     const goToPage = (page: string) => {
@@ -70,6 +74,13 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
                 onClick={() => goToPage("/transports/registroSalidaMecanica")}
             >
                 Registro de Salida de Mecanica
+            </Menu.Item>
+            <Menu.Item
+                key="6"
+                className="navbar-brand"
+                onClick={() => goToPage("/transports/registerNoticias")}
+            >
+                Registro de Noticias
             </Menu.Item>
             {
                 isSuperAdmin.length > 0 && (
