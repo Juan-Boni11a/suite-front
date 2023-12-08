@@ -16,6 +16,7 @@ import StationsPage from "../../pages/Management/Stations";
 import MovilizationTypesPage from "../../pages/Management/MovilizationTypes";
 import MovilizationTosPage from "../../pages/Management/MovilizationTos";
 import MovilizationValiditiesPage from "../../pages/Management/MovilizationValidities";
+import RegisterNoticiasPage from "../../pages/RegisterNoticiasPage";
 
 
 function WelcomePage() {
@@ -32,8 +33,7 @@ const AuthenticatedNavigation = () => {
   console.log('USER', user)
 
 
-  const isSuperAdmin = user.roles.filter((role: any) => role.id === 1)
-
+  // const isSuperAdmin = user.roles.filter((role: any) => role.id === 1)
 
   return (
     <>
@@ -46,8 +46,9 @@ const AuthenticatedNavigation = () => {
             <Route path="abastecimientoCombustible" element={<AbastecimientoCombustiblePage />} />
             <Route path="solicitudMantenimiento" element={<SolicitudMantenimientoPage />} />
             <Route path="registroSalidaMecanica" element={<RegistroSalidaMecanicaPage />} />
+            <Route path="registerNoticias" element={<RegisterNoticiasPage />} />
 
-            {isSuperAdmin.length > 0 && (
+            {/* {isSuperAdmin.length > 0 && ( */}
               <>
                 <Route path="vehiculos" element={<VehiclesPage />} />
                 <Route path="ciudades" element={<CitiesPage />} />
@@ -55,8 +56,9 @@ const AuthenticatedNavigation = () => {
                 <Route path="tiposMovilizacion" element={<MovilizationTypesPage />} />
                 <Route path="parasMovilizacion" element={<MovilizationTosPage />} />
                 <Route path="vigenciasMovilizacion" element={<MovilizationValiditiesPage />} />
+                
               </>
-            )}
+            {/* // )} */}
 
           </Routes>
         </SideBar>
