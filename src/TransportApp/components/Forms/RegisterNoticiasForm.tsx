@@ -1,53 +1,24 @@
-import { Button, DatePicker, Form, Input, Modal, Row, Select, Typography, message } from "antd";
+import { Button, DatePicker, Form, List, Input, InputNumber, Radio, Modal, Row, Select, Table, Typography, Upload, message } from "antd";
 import DriversSelector from "../DriversSelector";
 import { useEffect, useState } from "react";
 import CarsSelector from "../CarsSelector";
 import { getData } from "../../services/common/getData";
 import { postData } from "../../../services/common/postData";
 import { transformDate, transformTime } from "../../../utils/general";
+import { UploadOutlined } from '@ant-design/icons';
 
-
-
-const activities = [
-    { label: 'Ingreso de datos', key: 1, value: 'Ingreso de datos' }
+const subsectores = [
+    { label: 'Empresarial', value: 1 },
+    { label: 'Industrial', value: 2 }
 ]
-
-
-/*const users = [
-    { label: 'Admin', key: 1, value: 1 },
-    { label: 'Juan Pérez', key: 1, value: 2 }
-
-const movilizationTypes = [
-    { label: 'Autoridad', key: 1, value: 1 },
-    { label: 'De patio', key: 1, value: 2 }
+const tipoInformacion = [
+    { label: 'Local', value: 1 },
+    { label: 'Actual', value: 2 }
 ]
+const medioComunicacion = [
+    { label: 'Digital', value: 1 },
+    { label: 'Fisico', value: 2 }
 ]
-const userTypes = [
-    { label: 'Conductor', key: 1, value: 1 },
-    { label: 'Funcionario', key: 1, value: 2 },
-    { label: 'Funcionario y conductor', key: 1, value: 3 }
-]
-
-const vigenceTypes = [
-    { label: 'Lunes a Viernes', key: 1, value: 1 },
-    { label: 'Lunes a Domingo', key: 1, value: 2 }
-]
-*/
-const places = [
-    { label: 'Quito', key: 1, value: 'Quito' },
-    { label: 'Guayaquil', key: 1, value: 'Guayaquil' },
-    { label: 'Cuenca', key: 1, value: 'Cuenca' }
-]
-
-
-const actions = [
-    { label: 'Cerrar', value: 1 },
-    { label: 'Guardar y Cerrar', value: 2 },
-    { label: 'Guardar y Actualizar', value: 3 },
-    { label: 'Guardar y Procesar', value: 4 },
-    { label: 'Imprimir', value: 5 },
-]
-
 
 function RegisterNoticiasForm({ handleModal, handleRefresh }: any) {
     const [form] = Form.useForm()
@@ -58,18 +29,13 @@ function RegisterNoticiasForm({ handleModal, handleRefresh }: any) {
 
     const [users, setUsers] = useState<any>([])
 
-    const [movilizationTypes, setMovilizationTypes] = useState<any>([])
-
-    const [movilizationTos, setMovilizationTos] = useState<any>([])
-
-    const [movilizationValidities, setMovilizationValidities] = useState<any>([])
-
     const [drivers, setDrivers] = useState<any>([])
-
 
     const [vehicles, setVehicles] = useState<any>([])
 
     const [submitting, setSubmitting] = useState(false)
+
+    const [opinions, setOpinions] = useState([]);
 
     function handleDriversModal() {
         setShowDriversModal(!showDriversModal)
@@ -123,7 +89,7 @@ function RegisterNoticiasForm({ handleModal, handleRefresh }: any) {
                     value: mt.id
                 }
             })
-            setMovilizationTypes(typesToSelect)
+            // setMovilizationTypes(typesToSelect)
         }
 
         const toRequest = await getData('movilizationTo')
@@ -136,7 +102,7 @@ function RegisterNoticiasForm({ handleModal, handleRefresh }: any) {
                     value: mto.id
                 }
             })
-            setMovilizationTos(toSelect)
+            // setMovilizationTos(toSelect)
         }
 
         const validitiesRequest = await getData('movilizationValidities')
@@ -149,7 +115,7 @@ function RegisterNoticiasForm({ handleModal, handleRefresh }: any) {
                     value: vd.id
                 }
             })
-            setMovilizationValidities(validitiesToSelect)
+            // setMovilizationValidities(validitiesToSelect)
         }
 
         const vehiclesRequest = await getData('vehicles')
@@ -202,103 +168,130 @@ function RegisterNoticiasForm({ handleModal, handleRefresh }: any) {
         setSubmitting(false)
 
     }
+    const handleAddOpinion = () => {
+        const name = form.getFieldValue('name');
+        const opinion = form.getFieldValue('opinion');
+        const tendencia = form.getFieldValue('tendencia');
+    
+        if (name && opinion && tendencia) {
+            const newOpinion = { name, opinion, tendencia };
+            setOpinions([...opinions, newOpinion]);
+            form.resetFields(['name', 'opinion', 'tendencia']);
+        }
+      };
+
+    const columns = [
+    {
+        title: 'Nombre',
+        dataIndex: 'name',
+        key: 'name',
+    },
+    {
+        title: 'Opinión',
+        dataIndex: 'opinion',
+        key: 'opinion',
+    },
+    {
+        title: 'Tendencia',
+        dataIndex: 'tendencia',
+        key: 'tendencia',
+    },
+    ];
+    
 
     return (
         <Form form={form} onFinish={handleSubmit} >
-            <Form.Item label="Iniciador" name="initiatorId">
-                <Select options={users} />
-            </Form.Item>
-
-            <Form.Item label="Actividad actual" name="currentActivity" >
-                <Select options={activities} />
-            </Form.Item>
-
-
-            <Form.Item label="Responsable actual" name="currentResponsible">
-                <Select options={users} />
-            </Form.Item>
-
-            <Form.Item label="Tipo de movilización" name="movilizationType" >
-                <Select options={movilizationTypes} />
-            </Form.Item>
-
-
-            <Form.Item label="Para" name="to">
-                <Select options={movilizationTos} />
-            </Form.Item>
-
-
-            <Form.Item label="Vigente de" name="validity">
-                <Select options={movilizationValidities} />
-            </Form.Item>
-
-            <Form.Item label="Conductor" name="driver">
-                <Input onClick={handleDriversModal} />
-            </Form.Item>
-
-            <Typography.Text>Vehículo</Typography.Text>
-            <Form.Item label="No. Placa" name="plate">
-                <Input onClick={handleCarsModal} />
-            </Form.Item>
-            <Form.Item label="Marca" name="brand">
-                <Input disabled />
-            </Form.Item>
-            <Form.Item label="Modelo" name="model">
-                <Input disabled />
-            </Form.Item>
-            <Form.Item label="Color" name="color">
-                <Input disabled />
-            </Form.Item>
-            <Form.Item label="Motor" name="engine">
-                <Input disabled />
-            </Form.Item>
-            <Form.Item label="No. Matrícula" name="enrollment">
-                <Input disabled />
-            </Form.Item>
-
-
-            <Typography.Text>Datos de Emisión</Typography.Text>
-
-            <Form.Item label="Lugar" name="emitPlace">
-                <Select options={places} />
-            </Form.Item>
-
-            <Form.Item label="Fecha" name="emitDate">
+            <Form.Item label="Fecha del registro" name="dateRegister">
                 <DatePicker />
             </Form.Item>
 
-            <Form.Item label="Hora" name="emitHour">
-                <DatePicker picker="time" />
+            <Form.Item label="Nombre Usuario" name="nameResponsable">
+                <Select options={users} />
             </Form.Item>
 
-
-            <Typography.Text>Datos de Caducidad</Typography.Text>
-
-            <Form.Item label="Lugar" name="expiryPlace">
-                <Select options={places} />
-            </Form.Item>
-
-            <Form.Item label="Fecha" name="expiryDate">
+            <Form.Item label="Fecha de la noticia" name="emitNoticia">
                 <DatePicker />
             </Form.Item>
 
-            <Form.Item label="Hora" name="expiryHour">
-                <DatePicker picker="time" />
+            <Form.Item label="Seccion" name="seccion">
+                <InputNumber />
             </Form.Item>
 
+            <Form.Item label="No. Pagina" name="numPagina">
+                <InputNumber />
+            </Form.Item>
 
-            <Form.Item label="Comentarios" name="comments">
+            <Form.Item label="Sector referente de la noticia" name="sectorNoticia">
+                <Radio.Group>
+                    <Radio>Hidrocarburos</Radio>
+                    <Radio>Minas</Radio>
+                </Radio.Group>
+            </Form.Item>
+
+            <Form.Item label="Subsector" name="subsector" >
+                <Select options={subsectores} />
+            </Form.Item>
+
+            <Form.Item label="Tipo de informacion" name="tipoInformacion" >
+                <Select options={tipoInformacion} />
+            </Form.Item>
+
+            <Form.Item label="Medio comunicacion" name="medioComunicacion" >
+                <Select options={medioComunicacion} />
+            </Form.Item>
+
+            <Form.Item label="Fuente / Articulista" name="fuente" >
+                <Input></Input>
+            </Form.Item>
+
+            <Form.Item label="Tendencia de la noticia" name="tendencia">
+                <Radio.Group>
+                    <Radio>Positiva</Radio>
+                    <Radio>Negativa</Radio>
+                    <Radio>Neutra</Radio>
+                </Radio.Group>
+            </Form.Item>
+            
+            <Form.Item label="Resumen" name="resumen">
+                <Input.TextArea rows={6} />
+            </Form.Item>
+
+            <Form.Item label="Imagen de la noticia" name="imagen">
+                <Upload >
+                    <Button icon={<UploadOutlined />}>Subir imagen</Button>
+                </Upload>
+            </Form.Item>
+
+            <Form.Item label="Generadores de opinion" name="imagen">
+            <Form.Item label="Nombre" name="name" rules={[{ required: true, message: 'Por favor ingrese su nombre' }]}>
+                <Input />
+            </Form.Item>
+            <Form.Item label="Opinión" name="opinion" rules={[{ required: true, message: 'Por favor ingrese su opinión' }]}>
+                <Input.TextArea />
+            </Form.Item>
+            <Form.Item label="Tendencia" name="tendencia" rules={[{ required: true, message: 'Por favor ingrese la tendencia' }]}>
+                <Input.TextArea />
+            </Form.Item>
+            <Form.Item>
+                <Button type="primary" onClick={handleAddOpinion}>
+                Añadir opinión
+                </Button>
+            </Form.Item>
+        </Form.Item>
+
+        <Table
+        dataSource={opinions}
+        columns={columns}
+        pagination={false}
+        bordered
+        rowKey={(record:any) => record.name}
+        />
+
+            <Form.Item label="Comentarios" name="comentario" style={{marginTop:"30px"}}>
                 <Input.TextArea rows={6} />
             </Form.Item>
 
 
-            <Modal open={showDriversModal} footer={null} title="Máster de Conductores" onCancel={handleDriversModal}>
-                <DriversSelector setSomeValues={setSomeValues} handleDriversModal={handleDriversModal} drivers={drivers} />
-            </Modal>
-
-            <Modal open={showCarsModal} footer={null} title="Vehículos" onCancel={handleCarsModal}>
-                <CarsSelector setSomeValues={setSomeValues} handleCarsModal={handleCarsModal} vehicles={vehicles} />
-            </Modal>
 
             <Row justify="end">
                 <Button htmlType="submit" type="primary" loading={submitting}>Guardar</Button>
