@@ -1,60 +1,30 @@
-import { Button, Card, Table } from "antd";
+import { Button, Card, Modal, Table } from "antd";
 import { useEffect, useState } from "react";
 import { getData } from "../../../services/common/getData";
+import UserForm from "../../../components/Forms/UserForm";
+import RoleAssignmentForm from "../../../components/Forms/RoleAssignmentForm";
 
 
-const columns = [
-    {
-        title: "Nombre",
-        dataIndex: "name",
-        key: "name",
-        width: "30%",
-    },
-    {
-        title: "Apellido",
-        dataIndex: "lastname",
-        key: "lastname",
-        width: "30%",
-    },
-    {
-        title: "No. cédula",
-        dataIndex: "ci",
-        key: "ci",
-        width: "30%",
-    },
-    {
-        title: "Número de teléfono",
-        dataIndex: "phone_number",
-        key: "phone_number",
-        width: "30%",
-    },
-    {
-        title: "Acciones",
-        dataIndex: "",
-        key: "x",
-        render: (record:any) => (
-            <Button
-                // onClick={() => showModal(record)}
-                type="primary"
-                style={{ marginBottom: 16 }}
-            >
-                Editar
-            </Button>
 
-        ),
-    },
-];
 
 function UsersPage() {
 
     const [users, setUsers] = useState([])
     const [loading, setLoading] = useState(false)
 
+    const [openModal, setOpenModal] = useState(false)
+
+    const [refresh, setRefresh] = useState(false)
+
+    const [openRoleAssignmentModal, setOpenRoleAssigmentModal] = useState(false)
+
+    const [selectedUser, setSelectedUser] = useState(null)
+
     async function initialRequest() {
         setLoading(true)
         const request = await getData('users')
         console.log('r', request)
-        if(request.length > 0) {
+        if (request.length > 0) {
             setUsers(request)
             setLoading(false)
         }
@@ -62,14 +32,69 @@ function UsersPage() {
 
     useEffect(() => {
         initialRequest()
-    }, [])
+    }, [refresh])
 
-    return(
-        <Card title="Usuarios" extra={<Button type="primary">Agregar</Button>} >
-            <Table columns={columns} dataSource={users} loading={loading}/>
+    const handleModal = () => setOpenModal(!openModal)
+
+    const handleRefresh = () => setRefresh(!refresh)
+
+
+    const columns = [
+        {
+            title: "Nombre",
+            dataIndex: "name",
+            key: "name",
+        },
+        {
+            title: "Apellido",
+            dataIndex: "lastname",
+            key: "lastname",
+        },
+        {
+            title: "No. cédula",
+            dataIndex: "ci",
+            key: "ci",
+        },
+        {
+            title: "Email",
+            dataIndex: "email",
+            key: "email",
+        },
+        {
+            title: "Número de teléfono",
+            dataIndex: "phone_number",
+            key: "phone_number",
+        },
+        {
+            title: 'Acciones',
+            key: 'X',
+            render: (record: any) => (
+                <Button type="primary" onClick={() => {
+                    setSelectedUser(record)
+                    handleRoleModal()
+                }}>
+                    Asignar roles
+                </Button>
+            )
+        }
+    ];
+
+    const handleRoleModal = () => setOpenRoleAssigmentModal(!openRoleAssignmentModal)
+
+    return (
+        <Card title="Usuarios" extra={<Button onClick={handleModal} type="primary">Agregar</Button>} >
+            <Table columns={columns} dataSource={users} loading={loading} pagination={{ pageSize: 20 }} />
+            <Modal open={openModal} title="Usuario" onCancel={handleModal} footer={null}>
+                <UserForm handleModal={handleModal} handleRefresh={handleRefresh} />
+            </Modal>
+
+            <Modal width={800} open={openRoleAssignmentModal} title="Asignación de roles" onCancel={handleRoleModal} footer={null}>
+                <RoleAssignmentForm selectedUser={selectedUser} />
+            </Modal>
+
         </Card>
     )
-    
+
 }
 
 export default UsersPage;

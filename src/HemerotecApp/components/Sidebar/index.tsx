@@ -43,88 +43,10 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
             <Menu.Item
                 key="1"
                 className="navbar-brand"
-                onClick={() => goToPage("/transports/movilizationOrders")}
+                onClick={() => goToPage("/hemerotec/noticias")}
             >
-                Orden de movilización
+                Noticias
             </Menu.Item>
-            <Menu.Item
-                key="2"
-                className="navbar-brand"
-                onClick={() => goToPage("/transports/solicitudTransport")}
-            >
-                Solicitud de Transporte
-            </Menu.Item>
-            <Menu.Item
-                key="3"
-                className="navbar-brand"
-                onClick={() => goToPage("/transports/abastecimientoCombustible")}
-            >
-                Abastecimiento de Combustible
-            </Menu.Item>
-            <Menu.Item
-                key="4"
-                className="navbar-brand"
-                onClick={() => goToPage("/transports/solicitudMantenimiento")}
-            >
-                Solicitud de Mantenimiento
-            </Menu.Item>
-            <Menu.Item
-                key="5"
-                className="navbar-brand"
-                onClick={() => goToPage("/transports/registroSalidaMecanica")}
-            >
-                Registro de Salida de Mecanica
-            </Menu.Item>
-            {
-                isSuperAdmin.length > 0 && (
-                    <>
-                        <Typography.Text style={{ color: 'white' }} >Administración</Typography.Text>
-                        <Menu.Item
-                            key="6"
-                            className="navbar-brand"
-                            onClick={() => goToPage("/transports/vehiculos")}
-                        >
-                            Vehículos
-                        </Menu.Item>
-                        <Menu.Item
-                            key="7"
-                            className="navbar-brand"
-                            onClick={() => goToPage("/transports/ciudades")}
-                        >
-                            Ciudades
-                        </Menu.Item>
-                        <Menu.Item
-                            key="8"
-                            className="navbar-brand"
-                            onClick={() => goToPage("/transports/estaciones")}
-                        >
-                            Estaciones de servicio
-                        </Menu.Item>
-                        <Menu.Item
-                            key="9"
-                            className="navbar-brand"
-                            onClick={() => goToPage("/transports/tiposMovilizacion")}
-                        >
-                            Tipos de movilización
-                        </Menu.Item>
-                        <Menu.Item
-                            key="10"
-                            className="navbar-brand"
-                            onClick={() => goToPage("/transports/parasMovilizacion")}
-                        >
-                            Paras de movilización
-                        </Menu.Item>
-                        <Menu.Item
-                            key="11"
-                            className="navbar-brand"
-                            onClick={() => goToPage("/transports/vigenciasMovilizacion")}
-                        >
-                            Vigencias de movilización
-                        </Menu.Item>
-
-                    </>
-                )
-            }
         </Menu>
     );
 };

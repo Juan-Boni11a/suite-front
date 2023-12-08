@@ -1,46 +1,43 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-//import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { Layout } from "antd";
 
-/*import { AuthContext } from "../../context/AuthContext";
-import PaymentsPage from "../../pages/Payments";
-import UsersPage from "../../pages/Users";
+import { SideBar } from "../../components/Sidebar";
+import { AuthContext } from "../../../context/AuthContext";
+import RegisterNoticiasPage from "../../pages/RegisterNoticiasPage";
 
-import NavigationComponent from "../../components/Navigation";
-import SchoolsPage from "../../pages/Schools";
-import ProgramsPage from "../../pages/Programs";
-*/
+
+function WelcomePage() {
+  return (
+    <h3>Bienvenido!</h3>
+  )
+}
+
 
 
 const AuthenticatedNavigation = () => {
+  const { user }: any = useContext(AuthContext)
 
-  /*const navigate = useNavigate();
-  const { user }: any = useContext(AuthContext);
-  
+  console.log('USER', user)
 
-  useEffect(() => {
-    user && navigate("/escuelas");
-  }, []);
 
+  const isSuperAdmin = user.roles.filter((role: any) => role.id === 1)
 
   return (
     <>
       <Layout>
-        <NavigationComponent>
+        <SideBar>
           <Routes>
-            <Route path="escuelas" element={<SchoolsPage />} />
-            <Route path="programas" element={<ProgramsPage />} />
-            <Route path="pagos" element={<PaymentsPage />} />
-            <Route path="usuarios" element={<UsersPage />} />
+            <Route path="" element={<WelcomePage />} />
+            <Route path="noticias" element={<RegisterNoticiasPage />} />
+         
           </Routes>
-        </NavigationComponent>
+        </SideBar>
       </Layout>
 
     </>
-  );*/
-
-  return( <h3>AUTHENTICATED</h3> )
+  );
 };
 
 export default AuthenticatedNavigation;

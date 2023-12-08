@@ -6,6 +6,7 @@ import TransportEntrypoint from "../../TransportApp/TransportEntrypoint";
 import HemerotecEntrypoint from "../../HemerotecApp/pages/Entrypoint";
 import UsersPage from "../../pages/GeneralManagement/Users";
 import SelectionPage from "../../pages/Selection";
+import GeneralManagement from "../../pages/GeneralManagement";
 
 
 
@@ -24,7 +25,7 @@ const AuthenticatedNavigation = () => {
     <Routes>
       <Route path="selection" element={<SelectionPage />} />
       <Route path="transports/*" element={<TransportEntrypoint />} />
-      <Route path="hemerotec" element={<HemerotecEntrypoint />} />
+      <Route path="hemerotec/*" element={<HemerotecEntrypoint />} />
       <Route path="usersManagement" element={<UsersPage />} />
     </Routes>
 
