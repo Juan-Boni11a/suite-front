@@ -1,9 +1,10 @@
-import { Button, DatePicker, Form, Input, Modal, Select, Typography } from "antd";
+import { Button, DatePicker, Form, Input, Modal, Row, Select, Typography, message } from "antd";
 import DriversSelector from "../DriversSelector";
 import { useEffect, useState } from "react";
 import CarsSelector from "../CarsSelector";
 import { getData } from "../../services/common/getData";
 import { postData } from "../../../services/common/postData";
+import { transformDate, transformTime } from "../../../utils/general";
 
 
 
@@ -48,7 +49,7 @@ const actions = [
 ]
 
 
-function MovilizationRequestForm() {
+function MovilizationRequestForm({ handleModal, handleRefresh }: any) {
     const [form] = Form.useForm()
 
     const [showDriversModal, setShowDriversModal] = useState(false)
@@ -67,6 +68,8 @@ function MovilizationRequestForm() {
 
 
     const [vehicles, setVehicles] = useState<any>([])
+
+    const [submitting, setSubmitting] = useState(false)
 
     function handleDriversModal() {
         setShowDriversModal(!showDriversModal)
@@ -157,38 +160,8 @@ function MovilizationRequestForm() {
     }
 
 
-    function transformDate(dateString: any) {
-        // Crear un objeto Date a partir de la cadena
-        var dateObject = new Date(dateString);
-
-        // Obtener los componentes de fecha y hora
-        var year = dateObject.getUTCFullYear();
-        var month = dateObject.getUTCMonth() + 1; // Meses en JavaScript se cuentan desde 0
-        var day = dateObject.getUTCDate();
-
-        // Formatear la cadena de fecha en el formato deseado (yyyy-MM-dd)
-        var formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-        return formattedDate
-
-    }
-
-    function transformTime(timeString: any) {
-        // Crear un objeto Date a partir de la cadena
-        var dateObject = new Date(timeString);
-
-        // Obtener los componentes de fecha y hora
-        var hours = dateObject.getUTCHours().toString().padStart(2, '0');
-        var minutes = dateObject.getUTCMinutes().toString().padStart(2, '0');
-        var seconds = dateObject.getUTCSeconds().toString().padStart(2, '0');
-        var milliseconds = dateObject.getUTCMilliseconds();
-
-        // Formatear la cadena de tiempo en el formato deseado (hh:mm:ss.SSS)
-        var formattedTime = `${hours}:${minutes}:${seconds}.${milliseconds}`;
-
-        return formattedTime;
-    }
-
     const handleSubmit = async (values: any) => {
+        setSubmitting(true)
         console.log('values', values)
         const { initiatorId, currentActivity, currentResponsible, movilizationType, to, validity, driver, plate, emitPlace, emitDate, emitHour, expiryPlace, expiryDate, expiryHour, comments } = values;
 
@@ -206,7 +179,7 @@ function MovilizationRequestForm() {
             driver: { id: driverId.length > 0 ? driverId[0].id : 1 },
             vehicle: { id: vehicleId.length > 0 ? vehicleId[0].id : 1 },
             emitPlace,
-            emitDate: transformDate(emitDate) ,
+            emitDate: transformDate(emitDate),
             emitHour: transformTime(emitHour),
             expiryPlace,
             expiryDate: transformDate(expiryDate),
@@ -217,7 +190,17 @@ function MovilizationRequestForm() {
         console.log('clean values', cleanValues)
 
         const request = await postData('movilizationRequests', cleanValues)
-        console.log('request', request)
+        if ('initiatorId' in request) {
+            message.success("Solicitud creada exitosamente")
+            setSubmitting(false)
+            handleModal()
+            handleRefresh()
+            return
+        }
+
+        message.error("Ha ocurrido un error :(")
+        setSubmitting(false)
+
     }
 
     return (
@@ -317,7 +300,9 @@ function MovilizationRequestForm() {
                 <CarsSelector setSomeValues={setSomeValues} handleCarsModal={handleCarsModal} vehicles={vehicles} />
             </Modal>
 
-            <Button htmlType="submit" type="primary">Guardar</Button>
+            <Row justify="end">
+                <Button htmlType="submit" type="primary" loading={submitting}>Guardar</Button>
+            </Row>
         </Form>
     )
 }

@@ -37,9 +37,9 @@ const estaciones = [
 ];
 
 
-function AbasSelector({ setSomeValues, handleAbasModal }: any) {
+function AbasSelector({ setSomeValues, handleAbasModal, stations }: any) {
 
-    const [searchResults, setSearchResults] = useState<any>([])
+    const [searchResults, setSearchResults] = useState<any>(stations)
 
     const [selectedAbas, setselectedAbas] = useState<any>(null)
 
@@ -48,11 +48,11 @@ function AbasSelector({ setSomeValues, handleAbasModal }: any) {
     function handleFinish(values: any) {
         const { searchParam, searchType } = values;
 
-        const filteredAbas = estaciones.filter((estacion: any) => {
+        const filteredAbas = stations.filter((estacion: any) => {
             if (searchType === 1) {
-                return estacion.nameAbas.includes(searchParam);
+                return estacion.name.includes(searchParam);
             } else if (searchType === 2) {
-                return estacion.ciudad.includes(searchParam);
+                return estacion.city.includes(searchParam);
             }
             return true; 
         });
@@ -99,7 +99,7 @@ function AbasSelector({ setSomeValues, handleAbasModal }: any) {
                             renderItem={(item: any, index) => (
                                 <List.Item onClick={() => handleSelectAbas(item)} >
                                     <List.Item.Meta
-                                        title={<label >{item.nameAbas}</label>}
+                                        title={<label >{item.name}</label>}
                                     />
                                 </List.Item>
                             )}
@@ -111,9 +111,9 @@ function AbasSelector({ setSomeValues, handleAbasModal }: any) {
                     {selectedAbas && (
                         <div>
                             <Typography> Detalles de la estacion de servicio</Typography>
-                            <Typography.Paragraph>Estacion: {selectedAbas.nameAbas}</Typography.Paragraph>
-                            <Typography.Paragraph>Ciudad: {selectedAbas.ciudad}</Typography.Paragraph>
-                            <Typography.Paragraph>Tipo de gasolina: {selectedAbas.tipoCombus}</Typography.Paragraph>
+                            <Typography.Paragraph>Estacion: {selectedAbas.name}</Typography.Paragraph>
+                            <Typography.Paragraph>Ciudad: {selectedAbas.city}</Typography.Paragraph>
+                            <Typography.Paragraph>Tipo de gasolina: {selectedAbas.fuelType || ""}</Typography.Paragraph>
                         </div>
                     )}
                 </Col>

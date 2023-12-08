@@ -1,9 +1,10 @@
 import { Button, DatePicker, InputNumber, Form, Input, Modal, Select, Typography, Radio, Upload} from "antd";
 import { UploadOutlined } from '@ant-design/icons';
 import DriversSelector from "../DriversSelector";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CarsSelector from "../CarsSelector";
 import AbasSelector from "../AbasSelector";
+import { getData } from "../../../services/common/getData";
 
 
 const users = [
@@ -29,7 +30,7 @@ const tipoCombus = [
 ]
 
 
-function AbasCombustibleForm() {
+function AbasCombustibleForm({handleModal, handleRefresh}: any) {
     const [form] = Form.useForm()
 
     const [showDriversModal, setShowDriversModal] = useState(false)
@@ -37,6 +38,16 @@ function AbasCombustibleForm() {
     const [showCarsModal, setShowCarsModal] = useState(false)
 
     const [showAbasModal, setShowAbasModal] = useState(false)
+
+    const [drivers, setDrivers] = useState<any>([])
+
+
+    const [vehicles, setVehicles] = useState<any>([])
+
+    const [users, setUsers] = useState<any>([])
+
+    const [stations, setStations] = useState<any>([])
+
 
 
     function handleDriversModal() {
@@ -53,6 +64,50 @@ function AbasCombustibleForm() {
 
     function setSomeValues(key: string, value: any) {
         form.setFieldsValue({ [key]: value });
+    }
+
+    useEffect(() => {
+        initialRequest()
+    }, [])
+
+    const initialRequest = async () => {
+        const usersRequest = await getData('users')
+        console.log('ur', usersRequest)
+        if (Array.isArray(usersRequest)) {
+            const usersToSelect = usersRequest.map((user: any) => {
+                return {
+                    ...user,
+                    label: user.name + " " + user.lastname,
+                    value: user.id
+                }
+            })
+            setUsers(usersToSelect)
+
+            const filterDrivers = usersRequest.filter((u: any) => u.roles.find((role: any) => role.id === 3))
+            console.log('dt', filterDrivers)
+            const driversToModal = filterDrivers.map((driver: any) => {
+                return {
+                    ...driver,
+                    fullName: driver.name + " " + driver.lastname,
+                    status: 'Disponible',
+                    ciExpiry: '15/02/2024'
+                }
+            })
+            setDrivers(driversToModal)
+        }
+
+        
+        const vehiclesRequest = await getData('vehicles')
+        console.log('ur', vehiclesRequest)
+        if (Array.isArray(vehiclesRequest)) {
+            setVehicles(vehiclesRequest)
+        }
+
+        const stationsRequest = await getData('serviceStations')
+        console.log('ur', stationsRequest)
+        if (Array.isArray(stationsRequest)) {
+            setStations(stationsRequest)
+        }
     }
 
     return (
@@ -179,15 +234,15 @@ function AbasCombustibleForm() {
                 </Upload>
             </Form.Item>
             <Modal open={showDriversModal} footer={null} title="Máster de Conductores" onCancel={handleDriversModal}>
-                <DriversSelector setSomeValues={setSomeValues} handleDriversModal={handleDriversModal} />
+                <DriversSelector drivers={drivers} setSomeValues={setSomeValues} handleDriversModal={handleDriversModal} />
             </Modal>
 
             <Modal open={showCarsModal} footer={null} title="Vehículos" onCancel={handleCarsModal}>
-                <CarsSelector setSomeValues={setSomeValues} handleCarsModal={handleCarsModal} />
+                <CarsSelector vehicles={vehicles} setSomeValues={setSomeValues} handleCarsModal={handleCarsModal} />
             </Modal>
 
             <Modal open={showAbasModal} footer={null} title="Master de Estación de Servicio" onCancel={handleAbasModal}>
-                <AbasSelector setSomeValues={setSomeValues} handleAbasModal={handleAbasModal} />
+                <AbasSelector stations={stations} setSomeValues={setSomeValues} handleAbasModal={handleAbasModal} />
             </Modal>
         </Form>
     )

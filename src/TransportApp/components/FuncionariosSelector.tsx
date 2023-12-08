@@ -17,19 +17,17 @@ const funcionarios = [
 ];
 
 
-function FuncionariosSelector({ setSomeValues, handleFuncionariosModal }: any) {
+function FuncionariosSelector({ setSomeValues, handleFuncionariosModal, users }: any) {
 
-    const [searchResults, setSearchResults] = useState<any>([])
+    const [searchResults, setSearchResults] = useState<any>(users)
 
     const [selectedFuncionario, setselectedFuncionario] = useState<any>(null)
 
 
-
     function handleFinish(values: any) {
-        const filteredFuncionarios = funcionarios.filter((funcionario: any) => funcionario.fullName.includes(values.searchParam))
+        const filteredFuncionarios = users.filter((funcionario: any) => funcionario.fullName.includes(values.searchParam))
         setSearchResults(filteredFuncionarios)
     }
-
 
 
     function handleSelectedFuncionario(funcionarios: any) {
@@ -37,8 +35,9 @@ function FuncionariosSelector({ setSomeValues, handleFuncionariosModal }: any) {
     }
 
     function confirmSelect() {
-        setSomeValues('funcionarios', selectedFuncionario.fullName)
-        setSomeValues('departamento', selectedFuncionario.departamento)
+        setSomeValues('officer', selectedFuncionario.fullName)
+        setSomeValues('officerId', selectedFuncionario.id)        
+        // setSomeValues('departamento', selectedFuncionario.departamento)
         handleFuncionariosModal()
     }
 
@@ -46,23 +45,10 @@ function FuncionariosSelector({ setSomeValues, handleFuncionariosModal }: any) {
     return (
         <div>
             <Form onFinish={handleFinish}>
-               
                 <Row>
                     <Col span={20}>
-                        <Form.Item name="searchParam" label="Buscar nombres que empiecen con:">
-                            <Select 
-                                showSearch placeholder="Seleccione un funcionario"
-                                filterOption={(input, option) =>
-                                    (option?.label?.toString()?.toLowerCase() ?? '').includes(input.toLowerCase())
-                                }
-                                >
-                                    {funcionarios.map((funcionario) => (
-                                    <Select.Option key={funcionario.fullName} value={funcionario.fullName} label={funcionario.fullName}>
-                                        {funcionario.fullName}
-                                    </Select.Option>
-                                
-                                    ))}
-                            </Select>
+                        <Form.Item name="searchParam" >
+                            <Input placeholder="Buscar.." />
                         </Form.Item>
                     </Col>
                     <Col span={3} offset={1} >
@@ -91,9 +77,8 @@ function FuncionariosSelector({ setSomeValues, handleFuncionariosModal }: any) {
                 <Col span={9} offset={1}>
                     {selectedFuncionario && (
                         <div>
-                            <Typography.Paragraph>Nombre Completo: {selectedFuncionario.fullName}</Typography.Paragraph>
-                            <Typography.Paragraph>Departamento: {selectedFuncionario.departamento}</Typography.Paragraph>
-                            
+                            <Typography.Paragraph>Nombre Completo: </Typography.Paragraph>    
+                            <Typography.Paragraph>{selectedFuncionario.fullName}</Typography.Paragraph>
                         </div>
                     )}
                 </Col>
