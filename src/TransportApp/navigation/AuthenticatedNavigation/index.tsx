@@ -10,10 +10,16 @@ import AbastecimientoCombustiblePage from "../../pages/AbastecimientoCombustible
 import SolicitudMantenimientoPage from "../../pages/SolicitudMantenimiento/";
 import RegistroSalidaMecanicaPage from "../../pages/RegistroSalidaMecanica/";
 import { AuthContext } from "../../../context/AuthContext";
+import VehiclesPage from "../../pages/Management/Vehicles";
+import CitiesPage from "../../pages/Management/Cities";
+import StationsPage from "../../pages/Management/Stations";
+import MovilizationTypesPage from "../../pages/Management/MovilizationTypes";
+import MovilizationTosPage from "../../pages/Management/MovilizationTos";
+import MovilizationValiditiesPage from "../../pages/Management/MovilizationValidities";
 
 
 function WelcomePage() {
-  return(
+  return (
     <h3>Bienvenido!</h3>
   )
 }
@@ -21,6 +27,13 @@ function WelcomePage() {
 
 
 const AuthenticatedNavigation = () => {
+  const { user }: any = useContext(AuthContext)
+
+  console.log('USER', user)
+
+
+  const isSuperAdmin = user.roles.filter((role: any) => role.id === 1)
+
 
   return (
     <>
@@ -33,6 +46,17 @@ const AuthenticatedNavigation = () => {
             <Route path="abastecimientoCombustible" element={<AbastecimientoCombustiblePage />} />
             <Route path="solicitudMantenimiento" element={<SolicitudMantenimientoPage />} />
             <Route path="registroSalidaMecanica" element={<RegistroSalidaMecanicaPage />} />
+
+            {isSuperAdmin.length > 0 && (
+              <>
+                <Route path="vehiculos" element={<VehiclesPage />} />
+                <Route path="ciudades" element={<CitiesPage />} />
+                <Route path="estaciones" element={<StationsPage />} />
+                <Route path="tiposMovilizacion" element={<MovilizationTypesPage />} />
+                <Route path="parasMovilizacion" element={<MovilizationTosPage />} />
+                <Route path="vigenciasMovilizacion" element={<MovilizationValiditiesPage />} />
+              </>
+            )}
 
           </Routes>
         </SideBar>

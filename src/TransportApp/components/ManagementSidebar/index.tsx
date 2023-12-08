@@ -18,14 +18,7 @@ interface IMenuOptionsProps {
 const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default close') }: IMenuOptionsProps) => {
     const navigate = useNavigate();
     const location = useLocation();
-
-    const { user }: any = useContext(AuthContext)
-
-    console.log('user', user)
-
-    const isSuperAdmin = user.roles.filter((role: any) => role.id === 1)
-
-
+    
     const goToPage = (page: string) => {
         //Se valida que la ruta la que quiero ir es diferente a la de origen, sino no tiene sentido navegar ni reiniciar el state de items
         if (location.pathname !== page) {
@@ -39,88 +32,10 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
             <Menu.Item
                 key="1"
                 className="navbar-brand"
-                onClick={() => goToPage("/transports/movilizationOrders")}
+                onClick={() => goToPage("/transports/admin/vehicles")}
             >
-                Orden de movilización
+                Vehículos
             </Menu.Item>
-            <Menu.Item
-                key="2"
-                className="navbar-brand"
-                onClick={() => goToPage("/transports/solicitudTransport")}
-            >
-                Solicitud de Transporte
-            </Menu.Item>
-            <Menu.Item
-                key="3"
-                className="navbar-brand"
-                onClick={() => goToPage("/transports/abastecimientoCombustible")}
-            >
-                Abastecimiento de Combustible
-            </Menu.Item>
-            <Menu.Item
-                key="4"
-                className="navbar-brand"
-                onClick={() => goToPage("/transports/solicitudMantenimiento")}
-            >
-                Solicitud de Mantenimiento
-            </Menu.Item>
-            <Menu.Item
-                key="5"
-                className="navbar-brand"
-                onClick={() => goToPage("/transports/registroSalidaMecanica")}
-            >
-                Registro de Salida de Mecanica
-            </Menu.Item>
-            {
-                isSuperAdmin.length > 0 && (
-                    <>
-                        <Typography.Text style={{ color: 'white' }} >Administración</Typography.Text>
-                        <Menu.Item
-                            key="6"
-                            className="navbar-brand"
-                            onClick={() => goToPage("/transports/vehiculos")}
-                        >
-                            Vehículos
-                        </Menu.Item>
-                        <Menu.Item
-                            key="7"
-                            className="navbar-brand"
-                            onClick={() => goToPage("/transports/ciudades")}
-                        >
-                            Ciudades
-                        </Menu.Item>
-                        <Menu.Item
-                            key="8"
-                            className="navbar-brand"
-                            onClick={() => goToPage("/transports/estaciones")}
-                        >
-                            Estaciones de servicio
-                        </Menu.Item>
-                        <Menu.Item
-                            key="9"
-                            className="navbar-brand"
-                            onClick={() => goToPage("/transports/tiposMovilizacion")}
-                        >
-                            Tipos de movilización
-                        </Menu.Item>
-                        <Menu.Item
-                            key="10"
-                            className="navbar-brand"
-                            onClick={() => goToPage("/transports/parasMovilizacion")}
-                        >
-                            Paras de movilización
-                        </Menu.Item>
-                        <Menu.Item
-                            key="11"
-                            className="navbar-brand"
-                            onClick={() => goToPage("/transports/vigenciasMovilizacion")}
-                        >
-                            Vigencias de movilización
-                        </Menu.Item>
-
-                    </>
-                )
-            }
         </Menu>
     );
 };
@@ -182,7 +97,7 @@ const MyDrop = ({ user, logout }: any) => {
 
 
 
-export const SideBar = ({ children }: any) => {
+export const ManagementSidebar = ({ children }: any) => {
     const { Content, Footer, Sider } = Layout;
     const [collapsed, setCollapsedt] = useState(false);
     const onCollapse = (collapsed: boolean) => setCollapsedt(collapsed);
@@ -226,7 +141,7 @@ export const SideBar = ({ children }: any) => {
                             </Col>
                         </Row>
                     </Layout.Header>
-                    <Content style={{ background: 'white' }}>
+                    <Content style={{ background: 'white'}}>
                         <div style={{ padding: 24, minHeight: 360 }}>
                             {children}
                         </div>
