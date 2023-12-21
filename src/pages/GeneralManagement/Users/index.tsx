@@ -1,4 +1,4 @@
-import { Button, Card, Modal, Table } from "antd";
+import { Button, Card, Form, Modal, Table } from "antd";
 import { useEffect, useState } from "react";
 import { getData } from "../../../services/common/getData";
 import UserForm from "../../../components/Forms/UserForm";
@@ -18,7 +18,7 @@ function UsersPage() {
 
     const [openRoleAssignmentModal, setOpenRoleAssigmentModal] = useState(false)
 
-    const [selectedUser, setSelectedUser] = useState(null)
+    const [selectedUser, setSelectedUser] = useState<any>(null)
 
     async function initialRequest() {
         setLoading(true)
@@ -71,7 +71,7 @@ function UsersPage() {
             render: (record: any) => (
                 <Button type="primary" onClick={() => {
                     setSelectedUser(record)
-                    handleRoleModal()
+                    handleRoleModal(record)
                 }}>
                     Asignar roles
                 </Button>
@@ -79,7 +79,21 @@ function UsersPage() {
         }
     ];
 
-    const handleRoleModal = () => setOpenRoleAssigmentModal(!openRoleAssignmentModal)
+    const [roleForm] = Form.useForm()
+
+    const handleRoleModal = (record: any) => {
+
+        if (openRoleAssignmentModal) {
+            roleForm.resetFields()
+        }
+
+        if (typeof record !== "undefined") {
+            const currentRoles = 'roles' in record ? record.roles.map((r: any) => r.id) : []
+            roleForm.setFieldValue('roles', currentRoles)
+        }
+
+        setOpenRoleAssigmentModal(!openRoleAssignmentModal)
+    }
 
     return (
         <Card title="Usuarios" extra={<Button onClick={handleModal} type="primary">Agregar</Button>} >
@@ -89,7 +103,7 @@ function UsersPage() {
             </Modal>
 
             <Modal width={800} open={openRoleAssignmentModal} title="Asignación de roles" onCancel={handleRoleModal} footer={null}>
-                <RoleAssignmentForm selectedUser={selectedUser} />
+                <RoleAssignmentForm roleForm={roleForm} selectedUser={selectedUser} handleModal={handleRoleModal} handleRefresh={handleRefresh} />
             </Modal>
 
         </Card>
