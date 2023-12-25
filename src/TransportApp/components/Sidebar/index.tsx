@@ -23,10 +23,10 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
 
     console.log('user', user)
 
-    const isSuperAdmin = user.roles.filter((role: any) => role.id === 1)
+    // const isSuperAdmin = user.roles.filter((role: any) => role.id === 1)
     //const isSuperAdmin = {email: '1'}
 
-    console.log(isSuperAdmin);
+    // console.log(isSuperAdmin);
 
 
 
@@ -76,9 +76,8 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
                 Registro de Salida de Mecanica
             </Menu.Item>
             {
-                isSuperAdmin.length > 0 && (
                     <>
-                        <Typography.Text style={{ color: 'white' }} >Administración</Typography.Text>
+                        {/* <Typography.Text style={{ color: 'white' }} >Administración</Typography.Text>
                         <Menu.Item
                             key="6"
                             className="navbar-brand"
@@ -120,10 +119,9 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
                             onClick={() => goToPage("/transports/vigenciasMovilizacion")}
                         >
                             Vigencias de movilización
-                        </Menu.Item>
+                        </Menu.Item> */}
 
                     </>
-                )
             }
         </Menu>
     );

@@ -4,11 +4,11 @@ import { useContext, useEffect } from "react";
 import { Layout } from "antd";
 
 import { SideBar } from "../../components/Sidebar";
-import MovilizationOrderPage from "../../pages/MotilizationOrder";
-import SolicitudTransportPage from "../../pages/SolicitudTransport";
-import AbastecimientoCombustiblePage from "../../pages/AbastecimientoCombustible/";
-import SolicitudMantenimientoPage from "../../pages/SolicitudMantenimiento/";
-import RegistroSalidaMecanicaPage from "../../pages/RegistroSalidaMecanica/";
+import MovilizationOrderPage from "../../pages/Admin/MotilizationOrder";
+import SolicitudTransportPage from "../../pages/Admin/SolicitudTransport";
+import AbastecimientoCombustiblePage from "../../pages/Admin/AbastecimientoCombustible";
+import SolicitudMantenimientoPage from "../../pages/Admin/SolicitudMantenimiento";
+import RegistroSalidaMecanicaPage from "../../pages/Admin/RegistroSalidaMecanica";
 import { AuthContext } from "../../../context/AuthContext";
 import VehiclesPage from "../../pages/Management/Vehicles";
 import CitiesPage from "../../pages/Management/Cities";
@@ -33,7 +33,8 @@ const AuthenticatedNavigation = () => {
   console.log('USER', user)
 
 
-  const isSuperAdmin = user.roles.filter((role: any) => role.id === 1)
+  // const isSuperAdmin = user.roles.filter((role: any) => role.id === 1)
+  // const isSuperAdmin = 1
 
   return (
     <>
@@ -48,17 +49,15 @@ const AuthenticatedNavigation = () => {
             <Route path="registroSalidaMecanica" element={<RegistroSalidaMecanicaPage />} />
             <Route path="registerNoticias" element={<RegisterNoticiasPage />} />
 
-            {isSuperAdmin.length > 0 && ( 
               <>
-                <Route path="vehiculos" element={<VehiclesPage />} />
+                {/* <Route path="vehiculos" element={<VehiclesPage />} />
                 <Route path="ciudades" element={<CitiesPage />} />
                 <Route path="estaciones" element={<StationsPage />} />
                 <Route path="tiposMovilizacion" element={<MovilizationTypesPage />} />
                 <Route path="parasMovilizacion" element={<MovilizationTosPage />} />
-                <Route path="vigenciasMovilizacion" element={<MovilizationValiditiesPage />} />
+                <Route path="vigenciasMovilizacion" element={<MovilizationValiditiesPage />} /> */}
                 
               </>
-            )}
 
           </Routes>
         </SideBar>
