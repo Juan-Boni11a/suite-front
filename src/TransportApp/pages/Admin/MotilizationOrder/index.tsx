@@ -90,16 +90,18 @@ const MovilizationOrderPage = () => {
         setRefresh(!refresh)
     }
 
+    const isClient = true
+
     return (
         <div>
             <Card title="Solicitudes de orden de movilización" extra={<Button icon={<PlusOutlined />} type="primary" onClick={handleModal}>Nueva solicitud</Button>}>
                 <Table loading={loading} columns={columns} dataSource={data} />
                 <Modal open={showModal} onCancel={handleModal} footer={null} width="60%" title="Solicitud de orden de movilización">
-                {/* {isClient ? ( */}
+                {isClient ? (
                         <MovRequestClienteForm  />
-                    {/* ) : ( */}
-                        {/* <MovilizationRequestForm handleModal={handleModal} handleRefresh={handleRefresh} /> */}
-                    {/* )} */}
+                    ) : ( 
+                        <MovilizationRequestForm handleModal={handleModal} handleRefresh={handleRefresh} />
+                    )} 
                 </Modal>
             </Card>
         </div>
