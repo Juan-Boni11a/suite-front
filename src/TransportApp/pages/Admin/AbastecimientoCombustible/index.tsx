@@ -9,29 +9,29 @@ import { Button, Card, Dropdown, MenuProps, Modal, Space, Table } from 'antd'
 import { useEffect, useState } from 'react'
 // import { getData } from '../../services/getData'
 import { DownOutlined, PlusOutlined } from '@ant-design/icons'
-import RegisterNoticiasForm from '../../components/Forms/Admin/RegisterNoticiasForm'
+import AbasCombustibleForm from '../../../components/Forms/Admin/AbasCombustibleForm'
+import { getData } from '../../../../services/common/getData'
 
 
 
 
 
-const RegisterNoticiasPage = () => {
+const AbastecimientoCombustiblePage = () => {
 
     const [loading,setLoading] = useState(false)
 
     const [showModal, setShowModal] = useState(false)
     const [refresh, setRefresh] = useState(false)
-    const [data, setData] = useState([])
+    const [data, setData] = useState<any>([])
 
     async function initialRequest() {
         setLoading(true)
-        setLoading(false)
-        /*const request = await getData('api/show-all-school-representative')
-        if (request['status_code'] === 200) {
-            setData(request.data)
+        const request = await getData('supplyRequests')
+        if (Array.isArray(request)) {
+            setData(request)
             setLoading(false)
         }
-        */
+        
     }
 
     useEffect(() => {
@@ -48,11 +48,14 @@ const RegisterNoticiasPage = () => {
 
     return (
         <div>
-            <Card title="Registro de Salida de Mecánica">
-                <RegisterNoticiasForm />
+            <Card title="Abastecimiento de Combustible" extra={<Button icon={<PlusOutlined />} type="primary" onClick={handleModal}>Nueva solicitud</Button>}>
+                <Table loading={loading} dataSource={data} />
+                <Modal open={showModal} onCancel={handleModal} footer={null} width="60%" title="Solicitud de orden de abastecimiento">
+                    <AbasCombustibleForm handleModal={handleModal} handleRefresh={handleRefresh} />
+                </Modal>
             </Card>
         </div>
     )
 }
 
-export default RegisterNoticiasPage
+export default AbastecimientoCombustiblePage

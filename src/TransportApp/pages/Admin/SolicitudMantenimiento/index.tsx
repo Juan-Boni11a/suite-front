@@ -9,13 +9,14 @@ import { Button, Card, Dropdown, MenuProps, Modal, Space, Table } from 'antd'
 import { useEffect, useState } from 'react'
 // import { getData } from '../../services/getData'
 import { DownOutlined, PlusOutlined } from '@ant-design/icons'
-import RegisterNoticiasForm from '../../components/Forms/Admin/RegisterNoticiasForm'
+import SolicitudManetenimientoForm from '../../../components/Forms/Admin/SolicitudMantenimientoForm'
+import RequestMantClientForm from '../../../components/Forms/Cliente/RequestMantClientForm'
 
 
 
 
 
-const RegisterNoticiasPage = () => {
+const SolicitudMantenimientoPage = () => {
 
     const [loading,setLoading] = useState(false)
 
@@ -46,13 +47,15 @@ const RegisterNoticiasPage = () => {
         setRefresh(!refresh)
     }
 
+    const isClient = true
     return (
         <div>
-            <Card title="Registro de Salida de Mecánica">
-                <RegisterNoticiasForm />
+            <Card title="Solicitud de orden de mantenimiento">
+                {isClient ? (<RequestMantClientForm/>):(<SolicitudManetenimientoForm />)}
+                
             </Card>
         </div>
     )
 }
 
-export default RegisterNoticiasPage
+export default SolicitudMantenimientoPage

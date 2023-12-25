@@ -9,13 +9,13 @@ import { Button, Card, Dropdown, MenuProps, Modal, Space, Table } from 'antd'
 import { useEffect, useState } from 'react'
 // import { getData } from '../../services/getData'
 import { DownOutlined, PlusOutlined } from '@ant-design/icons'
-import RegisterNoticiasForm from '../../components/Forms/Admin/RegisterNoticiasForm'
+import RegistroSalidaMecanicaForm from '../../../components/Forms/Admin/RegistroSalidaMecanicaForm'
 
 
 
 
 
-const RegisterNoticiasPage = () => {
+const RegistroSalidaMecanicaPage = () => {
 
     const [loading,setLoading] = useState(false)
 
@@ -49,10 +49,10 @@ const RegisterNoticiasPage = () => {
     return (
         <div>
             <Card title="Registro de Salida de Mecánica">
-                <RegisterNoticiasForm />
+                <RegistroSalidaMecanicaForm />
             </Card>
         </div>
     )
 }
 
-export default RegisterNoticiasPage
+export default RegistroSalidaMecanicaPage
