@@ -20,15 +20,11 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
     const location = useLocation();
 
     const { user }: any = useContext(AuthContext)
-
     console.log('user', user)
+// const isSuperAdmin = user.roles.filter((role: any) => role.id === 1)
 
-    // const isSuperAdmin = user.roles.filter((role: any) => role.id === 1)
-    //const isSuperAdmin = {email: '1'}
-
-    // console.log(isSuperAdmin);
-
-
+    const isSuperAdmin = false
+    const admin = true
 
     const goToPage = (page: string) => {
         //Se valida que la ruta la que quiero ir es diferente a la de origen, sino no tiene sentido navegar ni reiniciar el state de items
@@ -40,44 +36,50 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
 
     return (
         <Menu theme={theme} mode="inline" className="auth-menu">
-            <Menu.Item
+            {admin && (
+                <>
+                <Menu.Item
                 key="1"
                 className="navbar-brand"
                 onClick={() => goToPage("/transports/movilizationOrders")}
-            >
-                Orden de movilización
-            </Menu.Item>
-            <Menu.Item
-                key="2"
-                className="navbar-brand"
-                onClick={() => goToPage("/transports/solicitudTransport")}
-            >
-                Solicitud de Transporte
-            </Menu.Item>
-            <Menu.Item
-                key="3"
-                className="navbar-brand"
-                onClick={() => goToPage("/transports/abastecimientoCombustible")}
-            >
-                Abastecimiento de Combustible
-            </Menu.Item>
-            <Menu.Item
-                key="4"
-                className="navbar-brand"
-                onClick={() => goToPage("/transports/solicitudMantenimiento")}
-            >
-                Solicitud de Mantenimiento
-            </Menu.Item>
-            <Menu.Item
-                key="5"
-                className="navbar-brand"
-                onClick={() => goToPage("/transports/registroSalidaMecanica")}
-            >
-                Registro de Salida de Mecanica
-            </Menu.Item>
+                >
+                    Orden de movilización
+                </Menu.Item>
+                <Menu.Item
+                    key="2"
+                    className="navbar-brand"
+                    onClick={() => goToPage("/transports/solicitudTransport")}
+                >
+                    Solicitud de Transporte
+                </Menu.Item>
+                <Menu.Item
+                    key="3"
+                    className="navbar-brand"
+                    onClick={() => goToPage("/transports/abastecimientoCombustible")}
+                >
+                    Abastecimiento de Combustible
+                </Menu.Item>
+                <Menu.Item
+                    key="4"
+                    className="navbar-brand"
+                    onClick={() => goToPage("/transports/solicitudMantenimiento")}
+                >
+                    Solicitud de Mantenimiento
+                </Menu.Item>
+                <Menu.Item
+                    key="5"
+                    className="navbar-brand"
+                    onClick={() => goToPage("/transports/registroSalidaMecanica")}
+                >
+                    Registro de Salida de Mecanica
+                </Menu.Item>
+                    </>
+            )}
+           
             {
+                    isSuperAdmin && (
                     <>
-                        {/* <Typography.Text style={{ color: 'white' }} >Administración</Typography.Text>
+                        <Typography.Text style={{ color: 'white' }} >Administración</Typography.Text>
                         <Menu.Item
                             key="6"
                             className="navbar-brand"
@@ -119,9 +121,10 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
                             onClick={() => goToPage("/transports/vigenciasMovilizacion")}
                         >
                             Vigencias de movilización
-                        </Menu.Item> */}
+                        </Menu.Item>
 
                     </>
+                    )
             }
         </Menu>
     );
