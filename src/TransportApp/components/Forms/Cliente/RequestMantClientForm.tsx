@@ -8,7 +8,7 @@ const tipoCombus = [
     { label: "Extra", value: 2 },
 ];
 
-function LocationSelectorMap() {
+const LocationSelectorMap = () => {
     const [form] = Form.useForm();
     const [selectedLocation, setSelectedLocation] = useState(null);
 

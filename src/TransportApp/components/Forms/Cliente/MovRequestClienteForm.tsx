@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, DatePicker, Form, Input, Typography } from "antd";
 import { MapContainer, TileLayer, useMapEvents, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
-function MovRequestClienteForm() {
+const MovRequestClienteForm = () => {
   const [form] = Form.useForm();
   const [departureLocation, setDepartureLocation] = useState(null);
   const [arrivalLocation, setArrivalLocation] = useState(null);
@@ -51,7 +51,7 @@ function MovRequestClienteForm() {
       <div style={{ height: "300px", width: "700px", margin: "1px", maxWidth: "100%" }}>
         {mapReady && (
           <MapContainer
-            center={[12, 43.23]}
+            center={[-0.25442278218700787, -78.52226257367874]}
             zoom={13}
             style={{ height: "100%", width: "100%" }}
             
@@ -69,7 +69,7 @@ function MovRequestClienteForm() {
       <div style={{ height: "300px", width: "700px" }}>
         {mapReady && (
           <MapContainer
-            center={[51.505, 31.23]}
+            center={[-0.2980171115013572, -78.55026483579424]}
             zoom={13}
             style={{ height: "100%", width: "100%" }}
             
