@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
-import { Button, DatePicker, Form, Input, Typography } from "antd";
+import { Button, DatePicker, Form, Input, Typography, message } from "antd";
 import { MapContainer, TileLayer, useMapEvents, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import { transformDate, transformTime } from "../../../../utils/general";
+import { postData } from "../../../../services/common/postData";
+
 
 const MovRequestClienteForm = () => {
   const [form] = Form.useForm();
   const [departureLocation, setDepartureLocation] = useState(null);
   const [arrivalLocation, setArrivalLocation] = useState(null);
   const [mapReady, setMapReady] = useState(false);
+  const [submitting, setSubmitting] = useState(false)
+
 
   useEffect(() => {
     // Simular una recarga del mapa cuando el componente se monta
@@ -41,8 +46,49 @@ const MovRequestClienteForm = () => {
     ) : null;
   };
 
-  const onFinish = (values: Array<string>) => {
+  const onFinish = async (values: any) => {
     console.log("Form values:", values);
+    // setSubmitting(true)
+        const {id} = values;
+        // Obtener cordenadas de partida
+        const departureCoordinates = values.departureLocation.split(',').map((coord: string) => parseFloat(coord.trim()));
+        const latitudeDeparture = departureCoordinates[0];
+        const longitudeDeparture = departureCoordinates[1];
+
+        // Obtener las coordenadas de llegada
+        const arrivalCoordinates = values.arrivalLocation.split(',').map((coord:string) => parseFloat(coord.trim()));
+        const latitudeArrival = arrivalCoordinates[0];
+        const longitudeArrival = arrivalCoordinates[1];
+
+        console.log('Latitud de salida:', latitudeDeparture);
+        console.log('Longitud de salida:', longitudeDeparture);
+        console.log('Latitud de llegada:', latitudeArrival);
+        console.log('Longitud de llegada:', longitudeArrival);
+
+
+        const cleanValues = {
+          id,
+          dateArrival: transformDate(values.dateArrival),
+          hourArrival: transformTime(values.hourArrival),
+          latDeparture: latitudeDeparture,
+          longDeparture: longitudeDeparture,
+          latArrival: latitudeArrival,
+          longArrival: longitudeArrival,
+        }
+
+        console.log('clean values', cleanValues)
+
+        const request = await postData('api/movilizationRequests', cleanValues)
+        if ('latArrival' in request) {
+            message.success("Solicitud creada exitosamente")
+            setSubmitting(false)
+            return
+        }
+
+        message.error("Ha ocurrido un error :(")
+        setSubmitting(false)
+
+
   };
 
   return (
