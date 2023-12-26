@@ -7,8 +7,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button, Card, Dropdown, MenuProps, Modal, Space, Table } from 'antd'
 import { useEffect, useState } from 'react'
-// import { getData } from '../../services/getData'
-import { DownOutlined, PlusOutlined } from '@ant-design/icons'
 import RegisterNoticiasForm from '../../components/Forms/RegisterNoticiasForm'
 
 
@@ -16,35 +14,7 @@ import RegisterNoticiasForm from '../../components/Forms/RegisterNoticiasForm'
 
 
 const RegisterNoticiasPage = () => {
-
-    const [loading,setLoading] = useState(false)
-
-    const [showModal, setShowModal] = useState(false)
-    const [refresh, setRefresh] = useState(false)
-    const [data, setData] = useState([])
-
-    async function initialRequest() {
-        setLoading(true)
-        setLoading(false)
-        /*const request = await getData('api/show-all-school-representative')
-        if (request['status_code'] === 200) {
-            setData(request.data)
-            setLoading(false)
-        }
-        */
-    }
-
-    useEffect(() => {
-        initialRequest()
-    }, [refresh])
-
-    function handleModal() {
-        setShowModal(!showModal)
-    }
-
-    function handleRefresh() {
-        setRefresh(!refresh)
-    }
+   
 
     return (
         <div>
