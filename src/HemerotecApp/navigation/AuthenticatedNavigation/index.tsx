@@ -22,7 +22,7 @@ const AuthenticatedNavigation = () => {
   console.log('USER', user)
 
 
-  const isSuperAdmin = user.roles.filter((role: any) => role.id === 1)
+  // const isSuperAdmin = user.roles.filter((role: any) => role.id === 1)
 
   return (
     <>

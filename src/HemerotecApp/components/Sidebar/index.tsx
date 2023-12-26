@@ -23,10 +23,10 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
 
     console.log('user', user)
 
-    const isSuperAdmin = user.roles.filter((role: any) => role.id === 1)
+    // const isSuperAdmin = user.roles.filter((role: any) => role.id === 1)
     //const isSuperAdmin = {email: '1'}
 
-    console.log(isSuperAdmin);
+    // console.log(isSuperAdmin);
 
 
 
