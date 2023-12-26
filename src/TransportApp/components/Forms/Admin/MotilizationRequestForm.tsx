@@ -12,27 +12,6 @@ const activities = [
     { label: 'Ingreso de datos', key: 1, value: 'Ingreso de datos' }
 ]
 
-
-/*const users = [
-    { label: 'Admin', key: 1, value: 1 },
-    { label: 'Juan Pérez', key: 1, value: 2 }
-
-const movilizationTypes = [
-    { label: 'Autoridad', key: 1, value: 1 },
-    { label: 'De patio', key: 1, value: 2 }
-]
-]
-const userTypes = [
-    { label: 'Conductor', key: 1, value: 1 },
-    { label: 'Funcionario', key: 1, value: 2 },
-    { label: 'Funcionario y conductor', key: 1, value: 3 }
-]
-
-const vigenceTypes = [
-    { label: 'Lunes a Viernes', key: 1, value: 1 },
-    { label: 'Lunes a Domingo', key: 1, value: 2 }
-]
-*/
 const places = [
     { label: 'Quito', key: 1, value: 'Quito' },
     { label: 'Guayaquil', key: 1, value: 'Guayaquil' },
@@ -88,7 +67,7 @@ function MovilizationRequestForm({ handleModal, handleRefresh }: any) {
     }, [])
 
     const initialRequest = async () => {
-        const usersRequest = await getData('users')
+        const usersRequest = await getData('api/users')
         console.log('ur', usersRequest)
         if (Array.isArray(usersRequest)) {
             const usersToSelect = usersRequest.map((user: any) => {
@@ -113,7 +92,7 @@ function MovilizationRequestForm({ handleModal, handleRefresh }: any) {
             setDrivers(driversToModal)
         }
 
-        const typesRequest = await getData('movilizationTypes')
+        const typesRequest = await getData('api/movilizationTypes')
         console.log('ur', typesRequest)
         if (Array.isArray(typesRequest)) {
             const typesToSelect = typesRequest.map((mt: any) => {
@@ -126,7 +105,7 @@ function MovilizationRequestForm({ handleModal, handleRefresh }: any) {
             setMovilizationTypes(typesToSelect)
         }
 
-        const toRequest = await getData('movilizationTo')
+        const toRequest = await getData('api/movilizationTo')
         console.log('ur', toRequest)
         if (Array.isArray(toRequest)) {
             const toSelect = toRequest.map((mto: any) => {
@@ -139,7 +118,7 @@ function MovilizationRequestForm({ handleModal, handleRefresh }: any) {
             setMovilizationTos(toSelect)
         }
 
-        const validitiesRequest = await getData('movilizationValidities')
+        const validitiesRequest = await getData('api/movilizationValidities')
         console.log('ur', validitiesRequest)
         if (Array.isArray(validitiesRequest)) {
             const validitiesToSelect = validitiesRequest.map((vd: any) => {
@@ -152,7 +131,7 @@ function MovilizationRequestForm({ handleModal, handleRefresh }: any) {
             setMovilizationValidities(validitiesToSelect)
         }
 
-        const vehiclesRequest = await getData('vehicles')
+        const vehiclesRequest = await getData('api/vehicles')
         console.log('ur', vehiclesRequest)
         if (Array.isArray(vehiclesRequest)) {
             setVehicles(vehiclesRequest)
@@ -189,7 +168,7 @@ function MovilizationRequestForm({ handleModal, handleRefresh }: any) {
 
         console.log('clean values', cleanValues)
 
-        const request = await postData('movilizationRequests', cleanValues)
+        const request = await postData('api/movilizationRequests', cleanValues)
         if ('initiatorId' in request) {
             message.success("Solicitud creada exitosamente")
             setSubmitting(false)
