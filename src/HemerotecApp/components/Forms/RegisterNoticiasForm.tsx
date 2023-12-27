@@ -1,8 +1,10 @@
-import { Button, DatePicker, Form, List, Input, InputNumber, Radio, Modal, Row, Select, Table, Typography, Upload, message } from "antd";
+import { Button, DatePicker, Form, List, Input, InputNumber, Radio, Modal, Row, 
+    Select, Table, Typography, Upload, message, UploadProps, UploadFile } from "antd";
 import { useEffect, useState } from "react";
 import { postData } from "../../../services/common/postData";
 import { transformDate, transformTime } from "../../../utils/general";
 import { UploadOutlined } from '@ant-design/icons';
+import { uploadFileToCloudinary } from "../../utils/uploader";
 
 const users = [
     {label: 'Eduardo', value: 'Eduardo'},
@@ -25,12 +27,80 @@ const RegisterNoticiasForm = () => {
     const [form] = Form.useForm()
     const [submitting, setSubmitting] = useState(false)
     const [opinions, setOpinions] = useState([]);
+    const [fileList, setFileList] = useState<UploadFile[]>([])
+
+    const onChangeUpload: UploadProps['onChange'] = ({ fileList: newFileList }) => {
+
+        const updatedList = []
+
+        const tr = form.getFieldValue('testResults')
+
+        console.log('tr', tr)
+
+        const dfl = (tr && tr.length > 0) ? tr.map((result: any, index: any) => {
+            return {
+            uid: index,
+            name: result.url,
+            status: 'done',
+            url: result.url,
+            }
+        })
+            :
+            []
+
+        console.log('dfl', dfl)
+
+        console.log('new file list', newFileList)
+
+        const cleanNfl = newFileList.map((file: any) => {
+            return {
+            ...file,
+            status: 'done'
+            }
+        })
+
+        setFileList(cleanNfl);
+        };
 
     const handleSubmit = async (values: any) => {
         // setSubmitting(true)
-        console.log('values', values)
-        const { id } = values;
 
+
+        console.log('values', values)
+        let finalTestResults: any = []
+        // let testResultsToApi = []
+        if (values.imagen) {
+            const imageForm = new FormData()
+
+            console.log('treee', values.imagen)
+
+            for (let i = 0; i < fileList.length; i++) {
+                const fl: any = fileList[i];
+                const uploadPreset = "imagePreset";
+                imageForm.append('file', fl.originFileObj)
+                imageForm.append("upload_preset", uploadPreset);
+
+                const uploadImage = await uploadFileToCloudinary(imageForm)
+                console.log('ui', uploadImage)
+
+                if (!uploadImage) {
+                message.error("Algo ha salido mal procesando la imagen :( , por favor intenta de nuevo")
+                setSubmitting(false)
+                return
+                }
+
+                finalTestResults.push({
+                url: uploadImage
+                })
+                
+            }
+
+            console.log('ATR', finalTestResults)
+        }
+
+        console.log('AFTER ATR', finalTestResults)
+
+        const { id } = values;
         const cleanValues = {
             id,
             dateRegister: transformDate(values.dateRegister),
@@ -46,7 +116,8 @@ const RegisterNoticiasForm = () => {
             tendencia: values.tendencia,
             resumen: values.resumen,
             comentario: values.comentario,
-            opinions: opinions
+            opinions: opinions,
+            image: finalTestResults[0].url
         }
 
         console.log('clean values', cleanValues)
@@ -155,7 +226,12 @@ const RegisterNoticiasForm = () => {
             </Form.Item>
 
             <Form.Item label="Imagen de la noticia" name="imagen">
-                <Upload >
+                <Upload 
+                    showUploadList={true}
+                    multiple={true}
+                    fileList={fileList}
+                    onChange={onChangeUpload}
+                >
                     <Button icon={<UploadOutlined />}>Subir imagen</Button>
                 </Upload>
             </Form.Item>
