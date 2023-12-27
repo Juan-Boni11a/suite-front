@@ -51,7 +51,7 @@ function SolicitudTransportForm({handleModal, handleRefresh}: any) {
     }, [])
 
     const initialRequest = async () => {
-        const usersRequest = await getData('users')
+        const usersRequest = await getData('api/users')
         console.log('ur', usersRequest)
         if (Array.isArray(usersRequest)) {
             const usersToSelect = usersRequest.map((user: any) => {
@@ -92,7 +92,7 @@ function SolicitudTransportForm({handleModal, handleRefresh}: any) {
 
         console.log('clean values', cleanValues)
 
-        const request = await postData('transportationRequests', cleanValues)
+        const request = await postData('api/transportationRequests', cleanValues)
         if('initiatorId' in request){
             message.success("Solicitud creada exitosamente")
             setSubmitting(false)

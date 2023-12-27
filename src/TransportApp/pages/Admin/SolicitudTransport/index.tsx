@@ -69,7 +69,7 @@ const SolicitudTransportPage = () => {
 
     async function initialRequest() {
         setLoading(true)
-        const request = await getData('transportationRequests')
+        const request = await getData('api/transportationRequests')
         if (Array.isArray(request)) {
             setData(request)
             setLoading(false)

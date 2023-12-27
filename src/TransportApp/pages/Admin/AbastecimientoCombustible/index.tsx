@@ -26,7 +26,7 @@ const AbastecimientoCombustiblePage = () => {
 
     async function initialRequest() {
         setLoading(true)
-        const request = await getData('supplyRequests')
+        const request = await getData('api/supplyRequests')
         if (Array.isArray(request)) {
             setData(request)
             setLoading(false)

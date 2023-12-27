@@ -17,7 +17,8 @@ export const FormLogin = () => {
         try {
             setLoading(true);
             const datarequest = { email: values.email, password: values.password };
-            // const resp = await postData('api/users/login', datarequest)
+            const resp = await postData('api/login', datarequest)
+            /*
             let resp: any = {}
             if (datarequest.email === "admin@mail.com" && datarequest.password === "123123") {
                 resp = {
@@ -25,7 +26,7 @@ export const FormLogin = () => {
                     token: 'ey1232131'
                 }
             }
-            
+            */
             
             // const resp = await postData('api/users', datarequest)
             console.log('resp', resp)

@@ -71,7 +71,7 @@ function AbasCombustibleForm({handleModal, handleRefresh}: any) {
     }, [])
 
     const initialRequest = async () => {
-        const usersRequest = await getData('users')
+        const usersRequest = await getData('api/users')
         console.log('ur', usersRequest)
         if (Array.isArray(usersRequest)) {
             const usersToSelect = usersRequest.map((user: any) => {
@@ -97,13 +97,13 @@ function AbasCombustibleForm({handleModal, handleRefresh}: any) {
         }
 
         
-        const vehiclesRequest = await getData('vehicles')
+        const vehiclesRequest = await getData('api/vehicles')
         console.log('ur', vehiclesRequest)
         if (Array.isArray(vehiclesRequest)) {
             setVehicles(vehiclesRequest)
         }
 
-        const stationsRequest = await getData('serviceStations')
+        const stationsRequest = await getData('api/serviceStations')
         console.log('ur', stationsRequest)
         if (Array.isArray(stationsRequest)) {
             setStations(stationsRequest)
