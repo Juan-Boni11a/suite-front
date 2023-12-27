@@ -46,6 +46,7 @@ const RegisterNoticiasForm = () => {
             tendencia: values.tendencia,
             resumen: values.resumen,
             comentario: values.comentario,
+            opinions: opinions
         }
 
         console.log('clean values', cleanValues)
@@ -66,11 +67,14 @@ const RegisterNoticiasForm = () => {
         const name = form.getFieldValue('name');
         const opinion = form.getFieldValue('opinion');
         const tendencia = form.getFieldValue('tendencia');
-    
+      
         if (name && opinion && tendencia) {
-            const newOpinion = { name, opinion, tendencia };
-            setOpinions([...opinions, newOpinion]);
-            form.resetFields(['name', 'opinion', 'tendencia']);
+          const newOpinion = { 
+            name, 
+            opinion, 
+            tendencia };
+          setOpinions([...opinions, newOpinion]);
+          form.resetFields(['name', 'opinion', 'tendencia']);
         }
       };
 
@@ -157,13 +161,13 @@ const RegisterNoticiasForm = () => {
             </Form.Item>
 
             <Form.Item label="Generadores de opinion">
-                <Form.Item label="Nombre" name="name" rules={[{ required: true, message: 'Por favor ingrese su nombre' }]}>
+                <Form.Item label="Nombre" name="name">
                     <Input />
                 </Form.Item>
-                <Form.Item label="Opinión" name="opinion" rules={[{ required: true, message: 'Por favor ingrese su opinión' }]}>
+                <Form.Item label="Opinión" name="opinion">
                     <Input.TextArea />
                 </Form.Item>
-                <Form.Item label="Tendencia" name="tendencia" rules={[{ required: true, message: 'Por favor ingrese la tendencia' }]}>
+                <Form.Item label="Tendencia" name="tendencia">
                     <Input.TextArea />
                 </Form.Item>
                 <Form.Item>
