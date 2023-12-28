@@ -21,7 +21,7 @@ const columns = [
         key: "initiator",
         width: "30%",
         render: (record: any) => (
-            <span>{record.initiatorId.name + " " + record.initiatorId.lastname}</span>
+            <span>{record.initiatorId?.name + " " + record.initiatorId?.lastname}</span>
         )
     },
     {
