@@ -4,76 +4,34 @@ import { MapContainer, TileLayer, useMapEvents, Marker, Popup } from "react-leaf
 import "leaflet/dist/leaflet.css";
 import { transformDate, transformTime } from "../../../../utils/general";
 import { postData } from "../../../../services/common/postData";
-
+import Map from "./../../Map"
 
 const MovRequestClienteForm = () => {
   const [form] = Form.useForm();
-  const [departureLocation, setDepartureLocation] = useState(null);
-  const [arrivalLocation, setArrivalLocation] = useState(null);
-  const [mapReady, setMapReady] = useState(false);
   const [submitting, setSubmitting] = useState(false)
+  const [coordinates, setCoordinates] = useState({ lng: -78.55499458658646, lat: -0.29547810042325295 }); 
+  const [coordinatesDeparture, setCoordinatesDeparture] = useState({ lng: -78.55499458658646, lat: -0.29547810042325295 }); 
 
-
-  useEffect(() => {
-    // Simular una recarga del mapa cuando el componente se monta
-    setMapReady(false);
-    setTimeout(() => {
-      setMapReady(true);
-    }, 100);
-  }, []);
-
-  const handleMapClick = (e, locationType) => {
-    const clickedLocation = e.latlng;
-
-    if (locationType === "departure") {
-      setDepartureLocation(clickedLocation);
-      form.setFieldsValue({ departureLocation: `${clickedLocation.lat}, ${clickedLocation.lng}` });
-    } else if (locationType === "arrival") {
-      setArrivalLocation(clickedLocation);
-      form.setFieldsValue({ arrivalLocation: `${clickedLocation.lat}, ${clickedLocation.lng}` });
-    }
+  const handleCoordinatesChange = (newCoordinates:any) => {
+    setCoordinates(newCoordinates);
   };
-
-  const LocationMarker = ({ position, label }) => {
-    const map = useMapEvents({
-      click: (e) => handleMapClick(e, label),
-    });
-
-    return position ? (
-      <Marker position={position}>
-        <Popup>{label} Location: {`${position.lat}, ${position.lng}`}</Popup>
-      </Marker>
-    ) : null;
+  const handleCoordinatesChangeDeparture = (coorDeparture:any) => {
+    setCoordinatesDeparture(coorDeparture);
   };
+  
 
   const onFinish = async (values: any) => {
     console.log("Form values:", values);
     // setSubmitting(true)
         const {id} = values;
-        // Obtener cordenadas de partida
-        const departureCoordinates = values.departureLocation.split(',').map((coord: string) => parseFloat(coord.trim()));
-        const latitudeDeparture = departureCoordinates[0];
-        const longitudeDeparture = departureCoordinates[1];
-
-        // Obtener las coordenadas de llegada
-        const arrivalCoordinates = values.arrivalLocation.split(',').map((coord:string) => parseFloat(coord.trim()));
-        const latitudeArrival = arrivalCoordinates[0];
-        const longitudeArrival = arrivalCoordinates[1];
-
-        console.log('Latitud de salida:', latitudeDeparture);
-        console.log('Longitud de salida:', longitudeDeparture);
-        console.log('Latitud de llegada:', latitudeArrival);
-        console.log('Longitud de llegada:', longitudeArrival);
-
-
         const cleanValues = {
           id,
           dateArrival: transformDate(values.dateArrival),
           hourArrival: transformTime(values.hourArrival),
-          latDeparture: latitudeDeparture,
-          longDeparture: longitudeDeparture,
-          latArrival: latitudeArrival,
-          longArrival: longitudeArrival,
+          latDeparture: coordinates.lat,
+          longDeparture: coordinates.lng,
+          latArrival: coordinatesDeparture.lat,
+          longArrival: coordinatesDeparture.lng,
         }
 
         console.log('clean values', cleanValues)
@@ -95,47 +53,17 @@ const MovRequestClienteForm = () => {
     <>
       <p>Seleccione el lugar de partida: </p>
       <div style={{ height: "300px", width: "700px", margin: "1px", maxWidth: "100%" }}>
-        {mapReady && (
-          <MapContainer
-            center={[-0.25442278218700787, -78.52226257367874]}
-            zoom={13}
-            style={{ height: "100%", width: "100%" }}
-            
-          >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <LocationMarker position={departureLocation} label="departure" />
-          </MapContainer>
-        )}
+        <Map onCoordinatesChange={handleCoordinatesChange} />
+          <p>Coordenadas: {`Longitud: ${coordinates.lng}, Latitud: ${coordinates.lat}`}</p>
       </div>
 
-      <p>Seleccione el lugar de llegada: </p>
+      <p style={{marginTop: "30px"}}>Seleccione el lugar de llegada: </p>
       <div style={{ height: "300px", width: "700px" }}>
-        {mapReady && (
-          <MapContainer
-            center={[-0.2980171115013572, -78.55026483579424]}
-            zoom={13}
-            style={{ height: "100%", width: "100%" }}
-            
-          >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <LocationMarker position={arrivalLocation} label="arrival" />
-          </MapContainer>
-        )}
+      <Map onCoordinatesChange={handleCoordinatesChangeDeparture} />
+          <p>Coordenadas: {`Longitud: ${coordinatesDeparture.lng}, Latitud: ${coordinatesDeparture.lat}`}</p>
       </div>
 
-      <Form form={form} onFinish={onFinish} style={{ marginTop: "16px" }}>
-        <Form.Item label="Lugar de partida" name="departureLocation">
-          <Input readOnly />
-        </Form.Item>
-        <Form.Item label="Lugar de llegada" name="arrivalLocation">
-          <Input readOnly />
-        </Form.Item>
+      <Form form={form} onFinish={onFinish} style={{ marginTop: "50px" }}>
         <Form.Item label="Fecha de partida" name="dateArrival">
           <DatePicker picker="time" />
         </Form.Item>
