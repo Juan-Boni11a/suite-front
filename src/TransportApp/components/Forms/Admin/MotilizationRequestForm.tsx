@@ -1,10 +1,11 @@
 import { Button, DatePicker, Form, Input, Modal, Row, Select, Typography, message } from "antd";
 import DriversSelector from "../../Modals/DriversSelector";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import CarsSelector from "../../Modals/CarsSelector";
 import { getData } from "../../../services/common/getData";
-import { postData } from "../../../../services/common/postData";
+import { putData } from "../../../../services/common/putData";
 import { transformDate, transformTime } from "../../../../utils/general";
+import { AuthContext } from "../../../../context/AuthContext";
 
 
 
@@ -28,7 +29,11 @@ const actions = [
 ]
 
 
-function MovilizationRequestForm({ handleModal, handleRefresh }: any) {
+function MovilizationRequestForm({ selectedRequest, handleModal, handleRefresh }: any) {
+
+
+    const {user}: any = useContext(AuthContext)
+
     const [form] = Form.useForm()
 
     const [showDriversModal, setShowDriversModal] = useState(false)
@@ -149,7 +154,7 @@ function MovilizationRequestForm({ handleModal, handleRefresh }: any) {
         const vehicleId = vehicles.filter((ve: any) => ve.plate === plate)
 
         const cleanValues = {
-            initiatorId: { id: initiatorId },
+            initiatorId: { id: user.id },
             currentActivity,
             currentResponsible: { id: currentResponsible },
             movilizationType: { id: movilizationType },
@@ -168,9 +173,9 @@ function MovilizationRequestForm({ handleModal, handleRefresh }: any) {
 
         console.log('clean values', cleanValues)
 
-        const request = await postData('api/movilizationRequests', cleanValues)
+        const request = await putData('api/movilizationRequests/' + selectedRequest.id, cleanValues)
         if ('initiatorId' in request) {
-            message.success("Solicitud creada exitosamente")
+            message.success("Orden creada exitosamente")
             setSubmitting(false)
             handleModal()
             handleRefresh()
@@ -185,7 +190,7 @@ function MovilizationRequestForm({ handleModal, handleRefresh }: any) {
     return (
         <Form form={form} onFinish={handleSubmit} >
             <Form.Item label="Iniciador" name="initiatorId">
-                <Select options={users} />
+                <Input disabled defaultValue={user && (user.name + " " + user.lastname)} />
             </Form.Item>
 
             <Form.Item label="Actividad actual" name="currentActivity" >

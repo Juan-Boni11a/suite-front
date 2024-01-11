@@ -22,7 +22,7 @@ function UsersPage() {
 
     async function initialRequest() {
         setLoading(true)
-        const request = await getData('users')
+        const request = await getData('api/users')
         console.log('r', request)
         if (request.length > 0) {
             setUsers(request)

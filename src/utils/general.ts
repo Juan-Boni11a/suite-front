@@ -14,17 +14,16 @@ export function transformDate(dateString: any) {
 }
 
 export function transformTime(timeString: any) {
-    // Crear un objeto Date a partir de la cadena
-    var dateObject = new Date(timeString);
 
-    // Obtener los componentes de fecha y hora
-    var hours = dateObject.getUTCHours().toString().padStart(2, '0');
-    var minutes = dateObject.getUTCMinutes().toString().padStart(2, '0');
-    var seconds = dateObject.getUTCSeconds().toString().padStart(2, '0');
-    var milliseconds = dateObject.getUTCMilliseconds();
+    const fecha = new Date(timeString);
+    // Obtener horas, minutos y segundos
+    const horas = fecha.getHours().toString().padStart(2, '0');
+    const minutos = fecha.getMinutes().toString().padStart(2, '0');
+    const segundos = fecha.getSeconds().toString().padStart(2, '0');
 
-    // Formatear la cadena de tiempo en el formato deseado (hh:mm:ss.SSS)
-    var formattedTime = `${hours}:${minutes}:${seconds}.${milliseconds}`;
+    // Formatear la hora como una cadena
+    const horaFormateada = `${horas}:${minutos}:${segundos}`;
 
-    return formattedTime;
+
+    return horaFormateada
 }

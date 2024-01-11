@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Button, Layout, Menu, MenuTheme, Modal, Row, Col, MenuProps, Dropdown, Space, Typography } from "antd";
+import { Button, Layout, Menu, MenuTheme, Modal, Row, Col, MenuProps, Dropdown, Space, Typography, Tag } from "antd";
 import {
     MenuOutlined,
     UserOutlined,
@@ -21,10 +21,9 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
 
     const { user }: any = useContext(AuthContext)
     console.log('user', user)
-// const isSuperAdmin = user.roles.filter((role: any) => role.id === 1)
 
-    const isSuperAdmin = false
-    const admin = true
+    const isSuperAdmin = user.roles.filter((role: any) => role.id === 1)
+
 
     const goToPage = (page: string) => {
         //Se valida que la ruta la que quiero ir es diferente a la de origen, sino no tiene sentido navegar ni reiniciar el state de items
@@ -36,48 +35,25 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
 
     return (
         <Menu theme={theme} mode="inline" className="auth-menu">
-            {admin && (
-                <>
+            <>
                 <Menu.Item
-                key="1"
-                className="navbar-brand"
-                onClick={() => goToPage("/transports/movilizationOrders")}
-                >
-                    Orden de movilización
-                </Menu.Item>
-                <Menu.Item
-                    key="2"
+                    key="1"
                     className="navbar-brand"
-                    onClick={() => goToPage("/transports/solicitudTransport")}
+                    onClick={() => goToPage("/transports/movilizationOrders")}
                 >
-                    Solicitud de Transporte
-                </Menu.Item>
-                <Menu.Item
-                    key="3"
-                    className="navbar-brand"
-                    onClick={() => goToPage("/transports/abastecimientoCombustible")}
-                >
-                    Abastecimiento de Combustible
+                    Solicitudes de movilización
                 </Menu.Item>
                 <Menu.Item
                     key="4"
                     className="navbar-brand"
                     onClick={() => goToPage("/transports/solicitudMantenimiento")}
                 >
-                    Solicitud de Mantenimiento
+                    Solicitudes de Mantenimiento
                 </Menu.Item>
-                <Menu.Item
-                    key="5"
-                    className="navbar-brand"
-                    onClick={() => goToPage("/transports/registroSalidaMecanica")}
-                >
-                    Registro de Salida de Mecanica
-                </Menu.Item>
-                    </>
-            )}
-           
+            </>
+
             {
-                    isSuperAdmin && (
+                isSuperAdmin && (
                     <>
                         <Typography.Text style={{ color: 'white' }} >Administración</Typography.Text>
                         <Menu.Item
@@ -124,7 +100,7 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
                         </Menu.Item>
 
                     </>
-                    )
+                )
             }
         </Menu>
     );
@@ -196,6 +172,8 @@ export const SideBar = ({ children }: any) => {
 
     console.log('user', user)
 
+    const isAdmin = user.roles[0].name!=="CLIENTE" ? true : false
+    
     return (
         <>
             <Layout style={{ minHeight: '100vh' }}>
@@ -225,7 +203,8 @@ export const SideBar = ({ children }: any) => {
                                 <img src="./trLogin.png" alt="" style={{ height: 60 }} />
                             </Col>
                             <Col xxl={4} xl={4} lg={4} md={4} sm={10} xs={10}>
-                                <span style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly' }} >
+                                <span style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' }} >
+                                    {isAdmin ?  <Tag color="green">Administrador</Tag> : <Tag color="blue">Cliente</Tag> }
                                     <MyDrop user={user} logout={logout} />
                                 </span>
                             </Col>

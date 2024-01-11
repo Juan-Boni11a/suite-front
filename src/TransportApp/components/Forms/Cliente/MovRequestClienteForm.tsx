@@ -1,12 +1,16 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Button, DatePicker, Form, Input, Typography, message } from "antd";
 import { MapContainer, TileLayer, useMapEvents, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { transformDate, transformTime } from "../../../../utils/general";
 import { postData } from "../../../../services/common/postData";
 import Map from "./../../Map"
+import { AuthContext } from "../../../../context/AuthContext";
 
-const MovRequestClienteForm = () => {
+const MovRequestClienteForm = ({ handleModal, handleRefresh }: any) => {
+  const {user}: any = useContext(AuthContext)
+  console.log('user', user)
+
   const [form] = Form.useForm();
   const [submitting, setSubmitting] = useState(false)
   const [coordinates, setCoordinates] = useState({ lng: -78.55499458658646, lat: -0.29547810042325295 }); 
@@ -32,6 +36,7 @@ const MovRequestClienteForm = () => {
           longDeparture: coordinates.lng,
           latArrival: coordinatesDeparture.lat,
           longArrival: coordinatesDeparture.lng,
+          requester: { id: user.id }
         }
 
         console.log('clean values', cleanValues)
@@ -40,6 +45,8 @@ const MovRequestClienteForm = () => {
         if ('latArrival' in request) {
             message.success("Solicitud creada exitosamente")
             setSubmitting(false)
+            handleModal()
+            handleRefresh()
             return
         }
 
@@ -65,10 +72,10 @@ const MovRequestClienteForm = () => {
 
       <Form form={form} onFinish={onFinish} style={{ marginTop: "50px" }}>
         <Form.Item label="Fecha de partida" name="dateArrival">
-          <DatePicker picker="time" />
+          <DatePicker picker="date" />
         </Form.Item>
         <Form.Item label="Hora de partida" name="hourArrival">
-          <DatePicker picker="date" />
+          <DatePicker picker="time" />
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit">

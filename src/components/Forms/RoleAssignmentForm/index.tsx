@@ -41,7 +41,7 @@ function RoleAssignmentForm({ selectedUser, handleModal, handleRefresh, roleForm
         values.roles.forEach(async (roleId: any) => {
             if (!currentRoleIds.includes(roleId)) {
                 const userId = selectedUser.id
-                await postData(`users/${userId}/roles/${roleId}`, {})
+                await postData(`api/users/${userId}/roles/${roleId}`, {})
             }
         });
 
@@ -52,7 +52,7 @@ function RoleAssignmentForm({ selectedUser, handleModal, handleRefresh, roleForm
 
 
     const initialRequest = async () => {
-        const request = await getData('roles')
+        const request = await getData('api/roles')
         if (Array.isArray(request)) {
             const rolesToSelect = request.map((role: any) => {
                 return {
