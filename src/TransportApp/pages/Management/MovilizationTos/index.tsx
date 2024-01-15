@@ -16,7 +16,7 @@ const columns = [
 function MovilizationToForm({handleModal, handleRefresh}: any){
 
     const handleFinish = async (values: any) => {
-        const request = await postData('movilizationTo', values)
+        const request = await postData('api/movilizationTo', values)
         if('name' in request){
             message.success("Agregado exitosamente")
             handleModal()
@@ -54,7 +54,7 @@ function MovilizationTosPage(){
 
     const initialRequest = async () => {
         setLoading(true)
-        const request = await getData('movilizationTo')
+        const request = await getData('api/movilizationTo')
         if(Array.isArray(request)){
             setData(request)
             setLoading(false)

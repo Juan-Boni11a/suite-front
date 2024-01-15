@@ -1,4 +1,4 @@
-export function postData(endPoint:string, data:any){
+export function postData(endPoint:string, data:any, isHeme: boolean = false){
     let headers = localStorage.getItem("token") !== undefined ?
     {
         'Content-Type': 'application/json',
@@ -15,8 +15,11 @@ export function postData(endPoint:string, data:any){
         headers,
         body: JSON.stringify(data)
     }
-   
-    const request = fetch(`${import.meta.env.VITE_API_URL}/${endPoint}`, options)
+    
+    
+    const serviceUrl = !isHeme  ?  import.meta.env.VITE_API_URL : import.meta.env.VITE_HEME_API_URL 
+
+    const request = fetch(`${serviceUrl}/${endPoint}`, options)
     const json = request.then(response => response.json())
     return json;
 }

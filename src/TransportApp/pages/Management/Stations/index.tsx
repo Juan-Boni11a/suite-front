@@ -51,7 +51,7 @@ function StationForm({ handleModal, handleRefresh }: any) {
             city: { id: values.city }
         }
 
-        const request = await postData('serviceStations', cleanValues)
+        const request = await postData('api/serviceStations', cleanValues)
         if ('name' in request) {
             message.success("Estación de servicio agregada exitosamente")
             handleModal()
@@ -61,7 +61,7 @@ function StationForm({ handleModal, handleRefresh }: any) {
 
 
     const initialRequest = async () => {
-        const requestCities = await getData('cities')
+        const requestCities = await getData('api/cities')
         if(Array.isArray(requestCities)){
             const citiesToSelect = requestCities.map((city:any) => {
                 return {
@@ -126,7 +126,7 @@ function StationsPage() {
 
     const initialRequest = async () => {
         setLoading(true)
-        const request = await getData('serviceStations')
+        const request = await getData('api/serviceStations')
         if (Array.isArray(request)) {
             setData(request)
             setLoading(false)

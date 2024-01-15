@@ -62,7 +62,7 @@ export const FormLogin = () => {
                     rules={[
                         { required: true, message: 'Por favor ingrese su correo!' },
                         { type: 'email', message: 'Ingrese un email valido!' },
-                        { pattern: emailRgx, message: "El email es incorrecto" }
+                        //{ pattern: emailRgx, message: "El email es incorrecto" }
                     ]}
                 >
                     <Input />

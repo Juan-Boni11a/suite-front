@@ -53,7 +53,7 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
             </>
 
             {
-                isSuperAdmin && (
+                isSuperAdmin.length > 0  && (
                     <>
                         <Typography.Text style={{ color: 'white' }} >Administración</Typography.Text>
                         <Menu.Item

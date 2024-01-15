@@ -112,8 +112,10 @@ const MovilizationOrderPage = () => {
         }
 
         //SOLO PARA PROBAR HASTA QUE YA HAYAN APROBADAS
-        if (value === "ALL") {
-            setFilteredData([])
+        if (value === "APPROVED") {
+            const pending = data.filter((req: any) => req.driver !== null)
+            setFilteredData(pending)
+            return
         }
     }
 
@@ -151,13 +153,25 @@ const MovilizationOrderPage = () => {
             title: "Acciones",
             dataIndex: "",
             key: "x",
-            render: (record: any) => (
+            render: (record: any) => 
+            record.driver=== null ? 
+            (
                 <Button
                     onClick={() => handleCheckRequest(record)}
                     type="primary"
                     style={{ marginBottom: 16 }}
                 >
                     Revisar
+                </Button>
+
+            ):
+            (
+                <Button
+                    onClick={() => handleCheckRequest(record)}
+                    type="primary"
+                    style={{ marginBottom: 16 }}
+                >
+                    Ver reporte
                 </Button>
 
             ),

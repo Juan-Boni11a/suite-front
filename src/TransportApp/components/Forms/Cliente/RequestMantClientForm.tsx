@@ -1,15 +1,18 @@
 import Map from "./../../Map"
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Form, Select, Button, Input, DatePicker,  message  } from 'antd';
 import { transformTime } from "../../../../utils/general";
 import { postData } from "../../../../services/common/postData";
+import { AuthContext } from "../../../../context/AuthContext";
 
 const tipoCombus = [
   { label: "Super", value: "Super" },
   { label: "Extra", value: "Extra" },
 ];
 
-const RequestMantClientForm = () => {
+const RequestMantClientForm = ({handleModal, handleRefresh}: any) => {
+  const {user}: any = useContext(AuthContext)
+
   const [coordinates, setCoordinates] = useState({ lng: -78.55499458658646, lat: -0.29547810042325295 });
   const [submitting, setSubmitting] = useState(false)
   const [form] = Form.useForm();
@@ -19,15 +22,15 @@ const RequestMantClientForm = () => {
 
   const onFinish = async (values:any) => {
     console.log('Form values:', values);
-
     setSubmitting(true)
     const {id} = values;
     const cleanValues = {
         id,
         lat: coordinates.lat,
-        lng: coordinates.lng,
+        lon: coordinates.lng,
         tipoCombustible: values.tipoCombus,
         horaRequest: transformTime(values.requestMantClienteHora),
+        requester: { id: user.id }
     }
 
     console.log('clean values', cleanValues)
@@ -35,6 +38,8 @@ const RequestMantClientForm = () => {
     const request = await postData('api/maintenanceRequests', cleanValues)
     if ('lat' in request) {
         message.success("Solicitud creada exitosamente")
+        handleModal()
+        handleRefresh()
         setSubmitting(false)
         return
     }

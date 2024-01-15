@@ -16,7 +16,7 @@ const columns = [
 function MovilizationTypeForm({handleModal, handleRefresh}: any){
 
     const handleFinish = async (values: any) => {
-        const request = await postData('movilizationTypes', values)
+        const request = await postData('api/movilizationTypes', values)
         if('name' in request){
             message.success("Tipo de movilización agregado exitosamente")
             handleModal()
@@ -54,7 +54,7 @@ function MovilizationTypesPage(){
 
     const initialRequest = async () => {
         setLoading(true)
-        const request = await getData('movilizationTypes')
+        const request = await getData('api/movilizationTypes')
         if(Array.isArray(request)){
             setData(request)
             setLoading(false)

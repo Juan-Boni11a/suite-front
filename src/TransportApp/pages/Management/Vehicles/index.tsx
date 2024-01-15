@@ -11,7 +11,7 @@ import { postData } from "../../../../services/common/postData"
 function VehicleForm({handleModal, handleRefresh}: any){
 
     const handleFinish = async (values: any) => {
-        const request = await postData('vehicles', values)
+        const request = await postData('api/vehicles', values)
         if('plate' in request){
             message.success("Vehículo agregado exitosamente")
             handleModal()
@@ -113,7 +113,7 @@ function VehiclesPage(){
 
     const initialRequest = async () => {
         setLoading(true)
-        const request = await getData('vehicles')
+        const request = await getData('api/vehicles')
         if(Array.isArray(request)){
             setData(request)
             setLoading(false)

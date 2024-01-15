@@ -154,6 +154,7 @@ function MovilizationRequestForm({ selectedRequest, handleModal, handleRefresh }
         const vehicleId = vehicles.filter((ve: any) => ve.plate === plate)
 
         const cleanValues = {
+            ...selectedRequest,
             initiatorId: { id: user.id },
             currentActivity,
             currentResponsible: { id: currentResponsible },

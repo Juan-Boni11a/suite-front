@@ -1,4 +1,4 @@
-export function getData(endPoint:string){
+export function getData(endPoint:string, isHeme: boolean = false){
     let headers = localStorage.getItem("token") !== undefined ?
     {
         'Content-Type': 'application/json',
@@ -12,8 +12,10 @@ export function getData(endPoint:string){
         method: 'GET',
         headers
     }
-   
-    const request = fetch(`${import.meta.env.VITE_API_URL}/${endPoint}`, options)
+
+    const serviceUrl = !isHeme  ?  import.meta.env.VITE_API_URL : import.meta.env.VITE_HEME_API_URL 
+
+    const request = fetch(`${serviceUrl}/${endPoint}`, options)
     const json = request.then(response => response.json())
     return json;
 }

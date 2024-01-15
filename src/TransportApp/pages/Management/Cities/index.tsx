@@ -16,7 +16,7 @@ const columns = [
 function CityForm({handleModal, handleRefresh}: any){
 
     const handleFinish = async (values: any) => {
-        const request = await postData('cities', values)
+        const request = await postData('api/cities', values)
         if('name' in request){
             message.success("Ciudad agregada exitosamente")
             handleModal()
@@ -54,7 +54,7 @@ function CitiesPage(){
 
     const initialRequest = async () => {
         setLoading(true)
-        const request = await getData('cities')
+        const request = await getData('api/cities')
         if(Array.isArray(request)){
             setData(request)
             setLoading(false)
