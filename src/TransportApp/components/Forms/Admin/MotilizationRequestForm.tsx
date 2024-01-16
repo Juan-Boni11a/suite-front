@@ -37,13 +37,12 @@ const statusList = [
 ]
 
 
-function MovilizationRequestForm({ selectedRequest, handleModal, handleRefresh }: any) {
+function MovilizationRequestForm({ selectedRequest, handleModal, handleRefresh, form }: any) {
 
 
     const { user }: any = useContext(AuthContext)
 
-    const [form] = Form.useForm()
-
+    
     const statusValue = Form.useWatch('status', form);
 
     const [showDriversModal, setShowDriversModal] = useState(false)

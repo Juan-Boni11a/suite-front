@@ -5,7 +5,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Button, Card, Dropdown, MenuProps, Modal, Space, Table, } from 'antd'
+import { Button, Card, Dropdown, Form, MenuProps, Modal, Space, Table, } from 'antd'
 import { useContext, useEffect, useState } from 'react'
 // import { getData } from '../../services/getData'
 import { DownOutlined, PlusOutlined } from '@ant-design/icons'
@@ -65,6 +65,9 @@ const Filters = ({ filterBy }: any) => {
 
 
 const MovilizationOrderPage = () => {
+
+    const [form] = Form.useForm();
+  
 
     const [loading, setLoading] = useState(false)
 
@@ -192,7 +195,12 @@ const MovilizationOrderPage = () => {
                     footer={null}
                     width="60%"
                     title={isAdmin ? "Orden de movilización" : "Solicitud de orden de movilización"}>
-                    <MovilizationRequestForm handleModal={handleModal} handleRefresh={handleRefresh} selectedRequest={selectedRequest} />
+                    <MovilizationRequestForm 
+                        form={form}
+                        handleModal={handleModal} 
+                        handleRefresh={handleRefresh} 
+                        selectedRequest={selectedRequest} 
+                    />
                 </Modal>
             </Card>
         </div>

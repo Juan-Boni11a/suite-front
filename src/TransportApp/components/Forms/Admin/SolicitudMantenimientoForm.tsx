@@ -1,38 +1,55 @@
-import { Button, Radio, DatePicker, Form, Input, Modal, Select, Typography } from "antd";
+import { Button, Radio, DatePicker, Form, Input, Modal, Select, Typography, message } from "antd";
 import DriversSelector from "../../Modals/DriversSelector";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import CarsSelector from "../../Modals/CarsSelector";
 import MantenimientoSelector from "../../Modals/MantenimientoSelector";
+import Barcode from "react-barcode";
+import { getData } from "../../../../services/common/getData";
+import { AuthContext } from "../../../../context/AuthContext";
+import { transformDate, transformTime } from "../../../../utils/general";
+import { putData } from "../../../../services/common/putData";
+import { postData } from "../../../../services/common/postData";
 
-const users = [
-    { label: 'Admin', key: 1, value: 1 },
-    { label: 'Juan Pérez', key: 1, value: 2 }
+
+
+const currentActivities = [
+    { label: 'Ingreso de datos', key: 1, value: 'Ingreso de datos' }
 ]
-
-const activities = [
-    { label: 'Aprobar', key: 1, value: 1 },
-    { label: 'Aprobar y Enviar a Taller', key: 2, value: 2 },
-    { label: 'Rechazar', key: 3, value: 3 }
-]
-
 
 const actions = [
-    {  label: 'Cerrar', value: 1},
-    {  label: 'Guardar y Cerrar', value: 2},
-    {  label: 'Guardar y Actualizar', value: 3},
-    {  label: 'Guardar y Procesar', value: 4},
-    {  label: 'Imprimir', value: 5},
+    { label: 'Aprobar', key: 1, value: 'ACEPTADA' },
+    { label: 'Aprobar y Enviar a Taller', key: 2, value: 'TALLER' },
+    { label: 'Rechazar', key: 3, value: 'RECHAZADA' },
+    { label: 'Pendiente', key: 3, value: 'PENDIENTE' }
 ]
 
 
-function SolicitudMantenimientoForm() {
-    const [form] = Form.useForm()
+
+
+function SolicitudMantenimientoForm({ selectedRequest, handleModal, handleRefresh, form }: any) {
+
+    const { user }: any = useContext(AuthContext)
 
     const [showDriversModal, setShowDriversModal] = useState(false)
 
     const [showCarsModal, setShowCarsModal] = useState(false)
 
     const [showMantenimientoModal, setShowMantenimientoModal] = useState(false)
+
+    const [drivers, setDrivers] = useState<any>([])
+
+
+    const [vehicles, setVehicles] = useState<any>([])
+    const [users, setUsers] = useState<any>([])
+
+    const [stations, setStations] = useState<any>([])
+
+
+    const [submitting, setSubmitting] = useState(false)
+
+    const [activities, setActivities] = useState<any>([])
+
+
 
 
     function handleDriversModal() {
@@ -58,26 +75,183 @@ function SolicitudMantenimientoForm() {
     };
     */
 
+    const [barCodeValue, setBarCodeValue] = useState<any>('')
+    
+
+    function handleGenerateBarCode() {
+        const randomValue = Math.floor(Math.random() * 1000000000);
+        setBarCodeValue(randomValue)
+    }
+
+
+    async function initialRequest() {
+        const usersRequest = await getData('api/users')
+        console.log('ur', usersRequest)
+        if (Array.isArray(usersRequest)) {
+
+            const usersToSelect = usersRequest.map((user: any) => {
+                return {
+                    ...user,
+                    label: user.name + " " + user.lastname,
+                    value: user.id
+                }
+            })
+            setUsers(usersToSelect)
+
+            const filterDrivers = usersRequest.filter((u: any) => u.roles.find((role: any) => role.id === 3))
+            console.log('dt', filterDrivers)
+            const driversToModal = filterDrivers.map((driver: any) => {
+                return {
+                    ...driver,
+                    fullName: driver.name + " " + driver.lastname,
+                    status: 'Disponible',
+                    ciExpiry: '15/02/2024'
+                }
+            })
+            setDrivers(driversToModal)
+        }
+
+        const vehiclesRequest = await getData('api/vehicles')
+        console.log('ur', vehiclesRequest)
+        if (Array.isArray(vehiclesRequest)) {
+            setVehicles(vehiclesRequest)
+        }
+
+
+        const stationsRequest = await getData('api/serviceStations')
+        if (Array.isArray(stationsRequest)) {
+            const mStations = stationsRequest.filter((st: any) => st.type === "MAINTENANCE")
+            setStations(mStations)
+        }
+
+        const activitiesRequest = await getData('api/activities')
+        console.log('ur', activitiesRequest)
+        if (Array.isArray(activitiesRequest)) {
+
+            const activitiesToSelect = activitiesRequest.map((activity: any) => {
+                return {
+                    ...activity,
+                    label: activity.name,
+                    value: activity.id
+                }
+            })
+
+            setActivities(activitiesToSelect)
+        }
+    }
+
+    useEffect(() => {
+        initialRequest()
+    }, [])
+
+
+    useEffect(() => {
+        if(selectedRequest){
+            setBarCodeValue('barCode' in selectedRequest ? selectedRequest.barCode : '')
+    
+        }
+    }, [selectedRequest])
+
+    const handleSubmit = async (values: any) => {
+        console.log('values', values)
+        setSubmitting(true)
+
+        const { currentActivity, currentResponsible, date, hour, driver, plate, serviceStation, workType, status } = values;
+
+        const driverId = drivers.filter((dr: any) => dr.fullName === driver)
+        const vehicleId = vehicles.filter((ve: any) => ve.plate === plate)
+
+        const stationId = stations.filter((st: any) => st.name === serviceStation)
+
+        const cleanValues: any = {
+            initiatorId: { id: selectedRequest ? selectedRequest.initiatorId?.id : user.id },
+            requester: { id: selectedRequest ? selectedRequest.requester?.id : user.id },
+            currentActivity,
+            currentResponsible: { id: currentResponsible },
+            date: transformDate(date),
+            hour: transformTime(hour),
+            driver: { id: driverId.length > 0 ? driverId[0].id : 1 },
+            vehicle: { id: vehicleId.length > 0 ? vehicleId[0].id : 1 },
+            serviceStation: { id: stationId.length > 0 ? stationId[0].id : 1 },
+            workType,
+            barCode: barCodeValue,
+            status
+        }
+
+        if (selectedRequest) {
+            const request = await putData('api/maintenanceRequests/' + selectedRequest.id, cleanValues)
+            if ('requester' in request) {
+                
+                values.activities.map(async (a: any) => {
+                    await postData('api/maintenanceRequests/' + request.id + "/activity/" + a, {})
+                })
+                
+                message.success("Orden creada exitosamente")
+                
+                setSubmitting(false)
+                handleModal()
+                handleRefresh()
+                return
+            }
+
+            message.error("Ha ocurrido un error :(")
+            setSubmitting(false)
+            return
+
+        } else {
+            cleanValues['initiatorId'] = { id: user.id }
+            cleanValues['requester'] = { id: user.id }
+            cleanValues['status'] = 'PENDIENTE'
+
+            const request = await postData('api/maintenanceRequests', cleanValues)
+            if ('requester' in request) {
+
+                values.activities.map(async (a: any) => {
+                    await postData('api/maintenanceRequests/' + request.id + "/activity/" + a, {})
+                })
+
+                message.success("Solicitud creada exitosamente")
+                setSubmitting(false)
+                handleModal()
+                handleRefresh()
+                return
+
+            } else {
+                message.error("Ha ocurrido un error :(")
+                setSubmitting(false)
+                return
+            }
+
+
+
+
+
+
+        }
+
+    }
+
     return (
-        <Form form={form}>
-            <Form.Item label="Iniciador">
+        <Form form={form} onFinish={handleSubmit}>
+            <Form.Item label="Iniciador" name="initiatorId">
+                <Input disabled defaultValue={user && (user.name + " " + user.lastname)} />
+
+            </Form.Item>
+
+            <Form.Item label="Actividad actual" name="currentActivity">
+                <Select options={currentActivities} />
+            </Form.Item>
+
+            <Form.Item label="Responsable actual" name="currentResponsible">
                 <Select options={users} />
             </Form.Item>
 
-            <Form.Item label="Actividad actual">
-                <Select options={activities} />
-            </Form.Item>
-
-            <Form.Item label="Responsable actual">
-                <Select options={users} />
-            </Form.Item>
-
-            <Form.Item label="Fecha de mantenimiento" name="">
+            <Form.Item label="Fecha de mantenimiento" name="date">
                 <DatePicker />
             </Form.Item>
 
-            <Form.Item label="Hora de mantenimiento" name="">
-                <DatePicker picker="time" />
+            <Form.Item label="Hora de mantenimiento" name="hour">
+                <DatePicker picker="time"  />
             </Form.Item>
 
             <Typography.Text>Vehículo</Typography.Text>
@@ -107,51 +281,51 @@ function SolicitudMantenimientoForm() {
             </Form.Item>
 
             <Form.Item label="Cedula" name="ci">
-                <Input disabled/>
+                <Input disabled />
             </Form.Item>
-            
-            <Form.Item label="Estacion de servicio" name="nombreMantenimiento">
+
+            <Form.Item label="Estacion de servicio" name="serviceStation">
                 <Input onClick={handleMantenimientoModal} />
             </Form.Item>
 
             <Form.Item label="Tipo de trabajo" name="workType">
                 <Radio.Group /*onChange={onChangeWorkType}*/ >
-                    <Radio value={1}>Preventivo</Radio>
-                    <Radio value={2}>Correctivo</Radio>
+                    <Radio value={"PREVENTIVO"}>Preventivo</Radio>
+                    <Radio value={"CORRECTIVO"}>Correctivo</Radio>
                 </Radio.Group>
             </Form.Item>
 
             <Form.Item label="Actividades" name="activities">
-                <Radio.Group >
-                    <Radio value={1}>Pulido</Radio>
-                    <Radio value={2}>Cambio de llantas</Radio>
-                    <Radio value={3}>Recarga de baterías</Radio>
-                </Radio.Group>
+                <Select options={activities} mode="multiple" />
             </Form.Item>
 
             <Typography.Text>Código de barra</Typography.Text>
             <br />
-            <Button type="primary">Generar código</Button>
+            <Button onClick={handleGenerateBarCode} type="primary">Generar código</Button>
             <br />
+            <Barcode value={barCodeValue} />
             <br />
-            <Form.Item label="Acciones a tomar">
-                <Select options={activities} />
-            </Form.Item>
-
-            <Form.Item label="Acciones disponibles">
+            <Form.Item label="Acciones a tomar" name="status">
                 <Select options={actions} />
             </Form.Item>
 
+
+            <Form.Item>
+                <Button type="primary" htmlType="submit" loading={submitting}>
+                    Guardar
+                </Button>
+            </Form.Item>
+
             <Modal open={showDriversModal} footer={null} title="Máster de Conductores" onCancel={handleDriversModal}>
-                <DriversSelector setSomeValues={setSomeValues} handleDriversModal={handleDriversModal} />
+                <DriversSelector setSomeValues={setSomeValues} handleDriversModal={handleDriversModal} drivers={drivers} />
             </Modal>
 
             <Modal open={showCarsModal} footer={null} title="Vehículos" onCancel={handleCarsModal}>
-                <CarsSelector setSomeValues={setSomeValues} handleCarsModal={handleCarsModal} />
+                <CarsSelector setSomeValues={setSomeValues} handleCarsModal={handleCarsModal} vehicles={vehicles} />
             </Modal>
 
             <Modal open={showMantenimientoModal} footer={null} title="Estacion de servicio de Mantenimiento" onCancel={handleMantenimientoModal}>
-                <MantenimientoSelector setSomeValues={setSomeValues} handleMantenimientoModal={handleMantenimientoModal} />
+                <MantenimientoSelector setSomeValues={setSomeValues} handleMantenimientoModal={handleMantenimientoModal} stations={stations} />
             </Modal>
         </Form>
     )

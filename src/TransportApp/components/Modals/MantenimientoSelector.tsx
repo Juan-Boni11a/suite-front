@@ -8,37 +8,10 @@ const searchTypes = [
 
 ]
 
-const mantenimiento = [
-    { 
-        nombreMantenimiento: 'Taller DISTRILLANTAS',
-        ciudad: 'Quito',
-        descripcion: 'Parche de llantas, cambio de aceite, arreglo de chasis.'
-    },
-    { 
-        nombreMantenimiento: 'AutoService Rápido',
-        ciudad: 'Guayaquil',
-        descripcion: 'Revisión de frenos, cambio de aceite, alineación y balanceo.'
-    },
-    { 
-        nombreMantenimiento: 'Mecánica Veloz',
-        ciudad: 'Cuenca',
-        descripcion: 'Reparación de motor, cambio de bujías, diagnóstico electrónico.'
-    },
-    { 
-        nombreMantenimiento: 'Taller Autos Seguros',
-        ciudad: 'Ambato',
-        descripcion: 'Inspección de frenos, cambio de filtro de aire, alineación.'
-    },
-    { 
-        nombreMantenimiento: 'ServiMotor Diesel',
-        ciudad: 'Quito',
-        descripcion: 'Reparación de sistemas diésel, cambio de filtros, diagnóstico de inyección.'
-    }
-]
 
-function MantenimientoSelector({ setSomeValues, handleMantenimientoModal }: any) {
+function MantenimientoSelector({ setSomeValues, handleMantenimientoModal, stations }: any) {
 
-    const [searchResults, setSearchResults] = useState<any>([])
+    const [searchResults, setSearchResults] = useState<any>(stations)
 
     const [selectedMantenimiento, setselectedMantenimiento] = useState<any>(null)
 
@@ -47,11 +20,11 @@ function MantenimientoSelector({ setSomeValues, handleMantenimientoModal }: any)
     function handleFinish(values: any) {
         const { searchParam, searchType } = values;
     
-        const filteredMantenimiento = mantenimiento.filter((estacion: any) => {
+        const filteredMantenimiento = stations.filter((estacion: any) => {
             if (searchType === 1) {
-                return estacion.nameAbas.includes(searchParam);
+                return estacion.name.includes(searchParam);
             } else if (searchType === 2) {
-                return estacion.ciudad.includes(searchParam);
+                return estacion.city.name.includes(searchParam);
             }
             return true; 
         });
@@ -66,7 +39,7 @@ function MantenimientoSelector({ setSomeValues, handleMantenimientoModal }: any)
     }
 
     function confirmSelect() {
-        setSomeValues('nombreMantenimiento', selectedMantenimiento.nombreMantenimiento)
+        setSomeValues('serviceStation', selectedMantenimiento.name)
         handleMantenimientoModal()
     }
 
@@ -98,7 +71,7 @@ function MantenimientoSelector({ setSomeValues, handleMantenimientoModal }: any)
                             renderItem={(item: any, index) => (
                                 <List.Item onClick={() => handleSelectMantenmiento(item)} >
                                     <List.Item.Meta
-                                        title={<label >{item.nombreMantenimiento}</label>}
+                                        title={<label >{item.name}</label>}
                                     />
                                 </List.Item>
                             )}
@@ -110,9 +83,8 @@ function MantenimientoSelector({ setSomeValues, handleMantenimientoModal }: any)
                     {selectedMantenimiento && (
                         <div>
                             <Typography> Detalles de la estacion de mantenimiento</Typography>
-                            <Typography.Paragraph>Estacion: {selectedMantenimiento.nombreMantenimiento}</Typography.Paragraph>
-                            <Typography.Paragraph>Ciudad: {selectedMantenimiento.ciudad}</Typography.Paragraph>
-                            <Typography.Paragraph>Actividades que realiza: {selectedMantenimiento.descripcion}</Typography.Paragraph>
+                            <Typography.Paragraph>Nombre: {selectedMantenimiento.name}</Typography.Paragraph>
+                            <Typography.Paragraph>Ciudad: {selectedMantenimiento.city.name}</Typography.Paragraph>
                         </div>
                     )}
                 </Col>
