@@ -141,43 +141,36 @@ const MovilizationOrderPage = () => {
         },
         {
             title: "Fecha de salida",
-            dataIndex: "dateArrival",
-            key: "dateArrival",
+            dataIndex: "emitDate",
+            key: "emitDate",
         },
         {
             title: "Hora de salida",
-            dataIndex: "hourArrival",
-            key: "hourArrival",
-        },
-        {
-            title: "Acciones",
-            dataIndex: "",
-            key: "x",
-            render: (record: any) => 
-            record.driver=== null ? 
-            (
-                <Button
-                    onClick={() => handleCheckRequest(record)}
-                    type="primary"
-                    style={{ marginBottom: 16 }}
-                >
-                    Revisar
-                </Button>
-
-            ):
-            (
-                <Button
-                    onClick={() => handleCheckRequest(record)}
-                    type="primary"
-                    style={{ marginBottom: 16 }}
-                >
-                    Ver reporte
-                </Button>
-
-            ),
-        },
+            dataIndex: "emitHour",
+            key: "emitHour",
+        }
     ];
 
+    if (isAdmin) {
+        columns.push(
+            {
+                title: "Acciones",
+                dataIndex: "",
+                key: "x",
+                render: (record: any) =>
+                (
+                    <Button
+                        onClick={() => handleCheckRequest(record)}
+                        type="primary"
+                        style={{ marginBottom: 16 }}
+                    >
+                        {record.driver === null ? "Completar" : "Editar"}
+                    </Button>
+
+                ),
+            }
+        )
+    }
 
 
     return (
@@ -199,13 +192,7 @@ const MovilizationOrderPage = () => {
                     footer={null}
                     width="60%"
                     title={isAdmin ? "Orden de movilización" : "Solicitud de orden de movilización"}>
-                    {isAdmin ? (
-                        <MovilizationRequestForm handleModal={handleModal} handleRefresh={handleRefresh} selectedRequest={selectedRequest} />
-
-                    ) : (
-                        <MovRequestClienteForm handleModal={handleModal} handleRefresh={handleRefresh} />
-
-                    )}
+                    <MovilizationRequestForm handleModal={handleModal} handleRefresh={handleRefresh} selectedRequest={selectedRequest} />
                 </Modal>
             </Card>
         </div>

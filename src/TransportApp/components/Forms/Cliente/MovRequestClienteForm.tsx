@@ -36,7 +36,8 @@ const MovRequestClienteForm = ({ handleModal, handleRefresh }: any) => {
           longDeparture: coordinates.lng,
           latArrival: coordinatesDeparture.lat,
           longArrival: coordinatesDeparture.lng,
-          requester: { id: user.id }
+          requester: { id: user.id },
+          status: 'PENDING'
         }
 
         console.log('clean values', cleanValues)

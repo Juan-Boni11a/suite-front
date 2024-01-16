@@ -36,6 +36,18 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
     return (
         <Menu theme={theme} mode="inline" className="auth-menu">
             <>
+                {
+                    isSuperAdmin.length > 0 && (
+
+                        <Menu.Item
+                            key="0"
+                            className="navbar-brand"
+                            onClick={() => goToPage("/transports/")}
+                        >
+                            Dashboard
+                        </Menu.Item>
+                    )
+                }
                 <Menu.Item
                     key="1"
                     className="navbar-brand"
@@ -53,7 +65,7 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
             </>
 
             {
-                isSuperAdmin.length > 0  && (
+                isSuperAdmin.length > 0 && (
                     <>
                         <Typography.Text style={{ color: 'white' }} >Administración</Typography.Text>
                         <Menu.Item
@@ -172,8 +184,8 @@ export const SideBar = ({ children }: any) => {
 
     console.log('user', user)
 
-    const isAdmin = user.roles[0].name!=="CLIENTE" ? true : false
-    
+    const isAdmin = user.roles[0].name !== "CLIENTE" ? true : false
+
     return (
         <>
             <Layout style={{ minHeight: '100vh' }}>
@@ -204,7 +216,7 @@ export const SideBar = ({ children }: any) => {
                             </Col>
                             <Col xxl={4} xl={4} lg={4} md={4} sm={10} xs={10}>
                                 <span style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' }} >
-                                    {isAdmin ?  <Tag color="green">Administrador</Tag> : <Tag color="blue">Cliente</Tag> }
+                                    {isAdmin ? <Tag color="green">Administrador</Tag> : <Tag color="blue">Cliente</Tag>}
                                     <MyDrop user={user} logout={logout} />
                                 </span>
                             </Col>

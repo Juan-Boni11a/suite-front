@@ -6,11 +6,14 @@ import { getData } from "../../../services/common/getData";
 import { putData } from "../../../../services/common/putData";
 import { transformDate, transformTime } from "../../../../utils/general";
 import { AuthContext } from "../../../../context/AuthContext";
+import { postData } from "../../../../services/common/postData";
+import MovilizationLogs from "../../Logs/Movilizations";
 
 
 
 const activities = [
-    { label: 'Ingreso de datos', key: 1, value: 'Ingreso de datos' }
+    { label: 'Ingreso de datos', key: 1, value: 'Ingreso de datos' },
+    { label: 'Asignación de conductor', key: 2, value: 'Asignación de conductor' }
 ]
 
 const places = [
@@ -28,13 +31,20 @@ const actions = [
     { label: 'Imprimir', value: 5 },
 ]
 
+const statusList = [
+    { label: 'Aceptar', value: 'ACCEPTED' },
+    { label: 'Rechazar', value: 'REJECTED' },
+]
+
 
 function MovilizationRequestForm({ selectedRequest, handleModal, handleRefresh }: any) {
 
 
-    const {user}: any = useContext(AuthContext)
+    const { user }: any = useContext(AuthContext)
 
     const [form] = Form.useForm()
+
+    const statusValue = Form.useWatch('status', form);
 
     const [showDriversModal, setShowDriversModal] = useState(false)
 
@@ -145,136 +155,210 @@ function MovilizationRequestForm({ selectedRequest, handleModal, handleRefresh }
 
 
     const handleSubmit = async (values: any) => {
+
         setSubmitting(true)
-        console.log('values', values)
-        const { initiatorId, currentActivity, currentResponsible, movilizationType, to, validity, driver, plate, emitPlace, emitDate, emitHour, expiryPlace, expiryDate, expiryHour, comments } = values;
 
-        const driverId = drivers.filter((dr: any) => dr.fullName === driver)
+        if (selectedRequest && isAdmin) {
 
-        const vehicleId = vehicles.filter((ve: any) => ve.plate === plate)
+            let cleanValues: any = {
+                status: values.status
+            }
+            console.log('aaaa', values.status)
+            if (values.status === "ACCEPTED") {
 
-        const cleanValues = {
-            ...selectedRequest,
-            initiatorId: { id: user.id },
-            currentActivity,
-            currentResponsible: { id: currentResponsible },
+                const { currentActivity, currentResponsible, driver, plate } = values
+                const driverId = drivers.filter((dr: any) => dr.fullName === driver)
+                const vehicleId = vehicles.filter((ve: any) => ve.plate === plate)
+
+                cleanValues = {
+                    ...cleanValues,
+                    currentActivity,
+                    currentResponsible: { id: currentResponsible },
+                    driver: { id: driverId.length > 0 ? driverId[0].id : 1 },
+                    vehicle: { id: vehicleId.length > 0 ? vehicleId[0].id : 1 }
+                }
+            }
+
+
+
+            const request = await putData('api/movilizationRequests/' + selectedRequest.id, cleanValues)
+            if ('initiatorId' in request) {
+                message.success("Orden creada exitosamente")
+                setSubmitting(false)
+                handleModal()
+                handleRefresh()
+                return
+            }
+
+            message.error("Ha ocurrido un error :(")
+            setSubmitting(false)
+            return
+
+
+        }
+
+
+
+
+        const { movilizationType, to, validity, emitPlace, emitDate, emitHour, expiryPlace, expiryDate, expiryHour } = values;
+
+
+        const cleanValues: any = {
             movilizationType: { id: movilizationType },
             to: { id: to },
             validity: { id: validity },
-            driver: { id: driverId.length > 0 ? driverId[0].id : 1 },
-            vehicle: { id: vehicleId.length > 0 ? vehicleId[0].id : 1 },
             emitPlace,
             emitDate: transformDate(emitDate),
             emitHour: transformTime(emitHour),
             expiryPlace,
             expiryDate: transformDate(expiryDate),
             expiryHour: transformTime(expiryHour),
-            comments
         }
 
-        console.log('clean values', cleanValues)
+        if (selectedRequest) {
+            const request = await putData('api/movilizationRequests/' + selectedRequest.id, cleanValues)
+            if ('emitPlace' in request) {
+                message.success("Orden creada exitosamente")
+                setSubmitting(false)
+                handleModal()
+                handleRefresh()
+                return
+            }
 
-        const request = await putData('api/movilizationRequests/' + selectedRequest.id, cleanValues)
-        if ('initiatorId' in request) {
-            message.success("Orden creada exitosamente")
+            message.error("Ha ocurrido un error :(")
             setSubmitting(false)
-            handleModal()
-            handleRefresh()
+            return
+
+        } else {
+            cleanValues['initiatorId'] = { id: user.id }
+            cleanValues['requester'] = { id: user.id }
+            cleanValues['status'] = 'PENDING'
+
+            const request = await postData('api/movilizationRequests', cleanValues)
+            if ('emitPlace' in request) {
+                message.success("Solicitud creada exitosamente")
+                setSubmitting(false)
+                handleModal()
+                handleRefresh()
+                return
+            }
+            message.error("Ha ocurrido un error :(")
+            setSubmitting(false)
             return
         }
 
-        message.error("Ha ocurrido un error :(")
-        setSubmitting(false)
-
     }
 
+    const isAdmin = user.roles[0].name !== "CLIENTE" ? true : false
+
+    console.log('s', selectedRequest)
     return (
         <Form form={form} onFinish={handleSubmit} >
-            <Form.Item label="Iniciador" name="initiatorId">
-                <Input disabled defaultValue={user && (user.name + " " + user.lastname)} />
-            </Form.Item>
+            {isAdmin && (
+                <>
+                    <Form.Item label="Estado" name="status">
+                        <Select options={statusList} />
+                    </Form.Item>
 
-            <Form.Item label="Actividad actual" name="currentActivity" >
-                <Select options={activities} />
-            </Form.Item>
+                    {statusValue !== "REJECTED" && (
+                        <>
+                            <Form.Item label="Iniciador" name="initiatorId">
+                                <Input disabled defaultValue={user && (user.name + " " + user.lastname)} />
+                            </Form.Item>
 
-
-            <Form.Item label="Responsable actual" name="currentResponsible">
-                <Select options={users} />
-            </Form.Item>
-
-            <Form.Item label="Tipo de movilización" name="movilizationType" >
-                <Select options={movilizationTypes} />
-            </Form.Item>
-
-
-            <Form.Item label="Para" name="to">
-                <Select options={movilizationTos} />
-            </Form.Item>
+                            <Form.Item label="Actividad actual" name="currentActivity" >
+                                <Select options={activities} />
+                            </Form.Item>
 
 
-            <Form.Item label="Vigente de" name="validity">
-                <Select options={movilizationValidities} />
-            </Form.Item>
+                            <Form.Item label="Responsable actual" name="currentResponsible">
+                                <Select options={users} />
+                            </Form.Item>
 
-            <Form.Item label="Conductor" name="driver">
-                <Input onClick={handleDriversModal} />
-            </Form.Item>
+                            <Form.Item label="Conductor" name="driver">
+                                <Input onClick={handleDriversModal} />
+                            </Form.Item>
 
-            <Typography.Text>Vehículo</Typography.Text>
-            <Form.Item label="No. Placa" name="plate">
-                <Input onClick={handleCarsModal} />
-            </Form.Item>
-            <Form.Item label="Marca" name="brand">
-                <Input disabled />
-            </Form.Item>
-            <Form.Item label="Modelo" name="model">
-                <Input disabled />
-            </Form.Item>
-            <Form.Item label="Color" name="color">
-                <Input disabled />
-            </Form.Item>
-            <Form.Item label="Motor" name="engine">
-                <Input disabled />
-            </Form.Item>
-            <Form.Item label="No. Matrícula" name="enrollment">
-                <Input disabled />
-            </Form.Item>
-
-
-            <Typography.Text>Datos de Emisión</Typography.Text>
-
-            <Form.Item label="Lugar" name="emitPlace">
-                <Select options={places} />
-            </Form.Item>
-
-            <Form.Item label="Fecha" name="emitDate">
-                <DatePicker />
-            </Form.Item>
-
-            <Form.Item label="Hora" name="emitHour">
-                <DatePicker picker="time" />
-            </Form.Item>
+                            <Typography.Text>Vehículo</Typography.Text>
+                            <Form.Item label="No. Placa" name="plate">
+                                <Input onClick={handleCarsModal} />
+                            </Form.Item>
+                            <Form.Item label="Marca" name="brand">
+                                <Input disabled />
+                            </Form.Item>
+                            <Form.Item label="Modelo" name="model">
+                                <Input disabled />
+                            </Form.Item>
+                            <Form.Item label="Color" name="color">
+                                <Input disabled />
+                            </Form.Item>
+                            <Form.Item label="Motor" name="engine">
+                                <Input disabled />
+                            </Form.Item>
+                            <Form.Item label="No. Matrícula" name="enrollment">
+                                <Input disabled />
+                            </Form.Item>
+                        </>
+                    )}
 
 
-            <Typography.Text>Datos de Caducidad</Typography.Text>
-
-            <Form.Item label="Lugar" name="expiryPlace">
-                <Select options={places} />
-            </Form.Item>
-
-            <Form.Item label="Fecha" name="expiryDate">
-                <DatePicker />
-            </Form.Item>
-
-            <Form.Item label="Hora" name="expiryHour">
-                <DatePicker picker="time" />
-            </Form.Item>
+                    {selectedRequest && (
+                        <MovilizationLogs requestId={selectedRequest.id} />
+                    )}
+                </>
+            )}
 
 
-            <Form.Item label="Comentarios" name="comments">
-                <Input.TextArea rows={6} />
-            </Form.Item>
+
+            {!isAdmin && (
+                <>
+                    <Form.Item label="Tipo de movilización" name="movilizationType" >
+                        <Select options={movilizationTypes} />
+                    </Form.Item>
+
+
+                    <Form.Item label="Para" name="to">
+                        <Select options={movilizationTos} />
+                    </Form.Item>
+
+
+                    <Form.Item label="Vigente de" name="validity">
+                        <Select options={movilizationValidities} />
+                    </Form.Item>
+                    <Typography.Text>Datos de Emisión</Typography.Text>
+
+                    <Form.Item label="Lugar" name="emitPlace">
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item label="Fecha" name="emitDate">
+                        <DatePicker />
+                    </Form.Item>
+
+                    <Form.Item label="Hora" name="emitHour">
+                        <DatePicker picker="time" />
+                    </Form.Item>
+
+
+                    <Typography.Text>Datos de Caducidad</Typography.Text>
+
+                    <Form.Item label="Lugar" name="expiryPlace">
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item label="Fecha" name="expiryDate">
+                        <DatePicker />
+                    </Form.Item>
+
+                    <Form.Item label="Hora" name="expiryHour">
+                        <DatePicker picker="time" />
+                    </Form.Item>
+
+
+
+                </>
+            )}
+
 
 
             <Modal open={showDriversModal} footer={null} title="Máster de Conductores" onCancel={handleDriversModal}>

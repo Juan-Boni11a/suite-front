@@ -17,6 +17,7 @@ import MovilizationTypesPage from "../../pages/Management/MovilizationTypes";
 import MovilizationTosPage from "../../pages/Management/MovilizationTos";
 import MovilizationValiditiesPage from "../../pages/Management/MovilizationValidities";
 import RegisterNoticiasPage from "../../pages/RegisterNoticiasPage";
+import Dashboard from "../../pages/Dashboard";
 
 function WelcomePage() {
   return (
@@ -41,7 +42,7 @@ const AuthenticatedNavigation = () => {
           <Routes>
             <Route path="solicitudMantenimiento" element={<SolicitudMantenimientoPage />} />
             <Route path="movilizationOrders" element={<MovilizationOrderPage />} />
-            <Route path="" element={<WelcomePage />} />
+            <Route path="" element={<Dashboard />} />
             <Route path="movilizationOrders" element={<MovilizationOrderPage />} />
             <Route path="solicitudTransport" element={<SolicitudTransportPage />} />
             <Route path="abastecimientoCombustible" element={<AbastecimientoCombustiblePage />} />

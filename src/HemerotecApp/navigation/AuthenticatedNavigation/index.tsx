@@ -6,6 +6,7 @@ import { Layout } from "antd";
 import { SideBar } from "../../components/Sidebar";
 import { AuthContext } from "../../../context/AuthContext";
 import RegisterNoticiasPage from "../../pages/RegisterNoticiasPage";
+import Dashboard from "../../pages/Dashboard";
 
 
 function WelcomePage() {
@@ -29,7 +30,7 @@ const AuthenticatedNavigation = () => {
       <Layout>
         <SideBar>
           <Routes>
-            <Route path="" element={<WelcomePage />} />
+            <Route path="" element={<Dashboard />} />
             <Route path="noticias" element={<RegisterNoticiasPage />} />
          
           </Routes>

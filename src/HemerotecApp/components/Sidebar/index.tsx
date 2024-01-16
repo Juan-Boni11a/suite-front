@@ -27,6 +27,7 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
     //const isSuperAdmin = {email: '1'}
 
     // console.log(isSuperAdmin);
+    const isSuperAdmin = user.roles.filter((role: any) => role.id === 1)
 
 
 
@@ -40,6 +41,19 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
 
     return (
         <Menu theme={theme} mode="inline" className="auth-menu">
+
+            {
+                isSuperAdmin.length > 0 && (
+
+                    <Menu.Item
+                        key="0"
+                        className="navbar-brand"
+                        onClick={() => goToPage("/hemerotec/")}
+                    >
+                        Dashboard
+                    </Menu.Item>
+                )
+            }
             <Menu.Item
                 key="1"
                 className="navbar-brand"
