@@ -89,7 +89,6 @@ export const FormLogin = () => {
                     </Button>
                 </Form.Item>
 
-                <label>No tienes cuenta?<a onClick={() => navigate("/register")}>Regístrate</a></label>
             </Form>
         </Card>
     )
