@@ -2,15 +2,26 @@ import { useEffect, useState } from "react"
 import { getData } from "../../../../services/common/getData"
 import { Button, Card, Form, Input, Modal, Row, Select, Table, message } from "antd"
 import { postData } from "../../../../services/common/postData"
+import { putData } from "../../../../services/common/putData"
 
 
 
 
 
 
-function VehicleForm({handleModal, handleRefresh}: any){
+function VehicleForm({handleModal, handleRefresh, form, selectedRecord}: any){
 
     const handleFinish = async (values: any) => {
+        if(selectedRecord!==null){
+            const request = await putData('api/vehicles/' + selectedRecord.id, values)
+            if('plate' in request){
+                message.success("Vehículo actualizado exitosamente")
+                handleModal()
+                handleRefresh()
+                return
+            }
+            return
+        }
         const request = await postData('api/vehicles', values)
         if('plate' in request){
             message.success("Vehículo agregado exitosamente")
@@ -20,7 +31,7 @@ function VehicleForm({handleModal, handleRefresh}: any){
     }
 
     return(
-        <Form onFinish={handleFinish}>
+        <Form form={form} onFinish={handleFinish}>
             <Form.Item label="Placa" name="plate" rules={[{ required: true, message: 'Informació requerida' }]} >
                 <Input />
             </Form.Item>
@@ -55,7 +66,15 @@ function VehicleForm({handleModal, handleRefresh}: any){
 
 
 
-const columns = [
+
+function VehiclesPage(){
+
+
+
+const [form] = Form.useForm()
+
+
+const columns: any = [
     {
         title: "Placa",
         dataIndex: "plate",
@@ -87,12 +106,18 @@ const columns = [
         title: "No. matrícula",
         dataIndex: "enrollment",
         key: "enrollment",
+    },
+    {
+        title: "Acciones",
+        key: "x",
+        render: (record: any) => (
+            <Button onClick={() => 
+                handleOpenModal(record)}>
+                    Editar
+            </Button>
+        )
     }
 ];
-
-
-
-function VehiclesPage(){
 
     const [data, setData] = useState<any>([])
     const [loading, setLoading] = useState(false)
@@ -100,6 +125,8 @@ function VehiclesPage(){
     const [openModal, setOpenModal] = useState(false)
 
     const [refresh, setRefresh] = useState(false)
+
+    const [selectedRecord, setSelectedRecord] = useState(null)
 
 
     const initialRequest = async () => {
@@ -116,7 +143,31 @@ function VehiclesPage(){
         initialRequest()
     }, [refresh])
 
-    const handleModal = () => setOpenModal(!openModal)
+    const handleModal = () => {
+        setOpenModal(!openModal)
+    }
+
+    
+    const handleOpenModal = (record: any = null) => {
+        if(record!==null){
+            const {name, plate, brand, model, color, engine, enrollment } = record;
+
+            form.setFieldValue('name', name)
+            form.setFieldValue('plate', plate)
+            form.setFieldValue('brand', brand)
+            form.setFieldValue('model', model)
+            form.setFieldValue('color', color)
+            form.setFieldValue('engine', engine)
+
+            form.setFieldValue('enrollment', enrollment)
+
+            setSelectedRecord(record)
+       
+        }
+   
+        setOpenModal(true)
+        
+    }
 
     const handleRefresh = () => setRefresh(!refresh)
 
@@ -126,7 +177,7 @@ function VehiclesPage(){
             <Table  loading={loading} dataSource={data} columns={columns} />
 
             <Modal title="Vehículo" open={openModal} footer={null} onCancel={handleModal}>
-                <VehicleForm handleModal={handleModal} handleRefresh={handleRefresh} />
+                <VehicleForm form={form} handleModal={handleModal} handleRefresh={handleRefresh} selectedRecord={selectedRecord} />
             </Modal>
 
         </Card>

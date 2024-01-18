@@ -2,33 +2,35 @@ import { useEffect, useState } from "react"
 import { getData } from "../../../../services/common/getData"
 import { Button, Card, Form, Input, Modal, Row, Table, message } from "antd"
 import { postData } from "../../../../services/common/postData"
+import { putData } from "../../../../services/common/putData"
 
 
-const columns = [
-    {
-        title: 'Nombre',
-        dataIndex: 'name',
-        key: 'name'
-    }
-]
 
 
-function CityForm({handleModal, handleRefresh}: any){
+function CityForm({handleModal, handleRefresh, form, selectedRecord}: any){
+
 
     const handleFinish = async (values: any) => {
+        if(selectedRecord!==null){
+            const request = await putData('api/cities/' + selectedRecord.id, values)
+            if('name' in request){
+                message.success("Ciudad actualizada exitosamente")
+                handleModal()
+                handleRefresh()
+                return
+            }
+            return
+        }
         const request = await postData('api/cities', values)
         if('name' in request){
             message.success("Ciudad agregada exitosamente")
             handleModal()
             handleRefresh()
-            return
         }
-
-        message.error("Ya existe una ciudad con ese nombre!")
     }
 
     return(
-        <Form onFinish={handleFinish}>
+        <Form form={form} onFinish={handleFinish}>
             <Form.Item label="Nombre" name="name" rules={[{ required: true, message: 'Informació requerida' }]} >
                 <Input />
             </Form.Item>
@@ -43,6 +45,10 @@ function CityForm({handleModal, handleRefresh}: any){
 
 
 function CitiesPage(){
+
+    const [form] = Form.useForm()
+    const [selectedRecord, setSelectedRecord] = useState(null)
+
 
     const [data, setData] = useState<any>([])
     const [loading, setLoading] = useState(false)
@@ -70,13 +76,46 @@ function CitiesPage(){
 
     const handleRefresh = () => setRefresh(!refresh)
 
+
+    const columns = [
+        {
+            title: 'Nombre',
+            dataIndex: 'name',
+            key: 'name'
+        },
+        {
+            title: "Acciones",
+            key: "x",
+            render: (record: any) => (
+                <Button onClick={() => 
+                    handleOpenModal(record)}>
+                        Editar
+                </Button>
+            )
+        }
+    ]
+
+    const handleOpenModal = (record: any = null) => {
+        if(record!==null){
+            const {name } = record;
+
+            form.setFieldValue('name', name)
+
+            setSelectedRecord(record)
+       
+        }
+   
+        setOpenModal(true)
+    } 
+    
+
     
     return(
         <Card title="Ciudades" extra={<Button onClick={handleModal} type="primary">Nueva ciudad</Button> } >
             <Table  loading={loading} dataSource={data} columns={columns} />
 
             <Modal title="Ciudad" open={openModal} onCancel={handleModal} footer={null}>
-                <CityForm handleModal={handleModal} handleRefresh={handleRefresh} />
+                <CityForm handleModal={handleModal} handleRefresh={handleRefresh} form={form} selectedRecord={selectedRecord} />
             </Modal>
 
         </Card>

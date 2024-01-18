@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { getData } from "../../../../services/common/getData"
 import { Button, Card, Form, Input, Modal, Row, Select, Table, message } from "antd"
 import { postData } from "../../../../services/common/postData"
+import { putData } from "../../../../services/common/putData"
 
 
 const stationTypes = [
@@ -37,13 +38,15 @@ const columns = [
 ]
 
 
-function StationForm({ handleModal, handleRefresh }: any) {
+function StationForm({ handleModal, handleRefresh, form, selectedRecord }: any) {
 
-    const [form] = Form.useForm()
+    
 
     const [cities, setCities] = useState<any>([])
 
     const [selectedType, setSelectedType] = useState('')
+
+    
 
     const handleFinish = async (values: any) => {
         const cleanValues = {
@@ -51,9 +54,22 @@ function StationForm({ handleModal, handleRefresh }: any) {
             city: { id: values.city }
         }
 
+        
+        if(selectedRecord!==null){
+            const request = await putData('api/serviceStations/' + selectedRecord.id, cleanValues)
+            if('name' in request){
+                message.success("Registro actualizado exitosamente")
+                handleModal()
+                handleRefresh()
+                return
+            }
+            return
+        }
+
+        
         const request = await postData('api/serviceStations', cleanValues)
-        if ('name' in request) {
-            message.success("Estación de servicio agregada exitosamente")
+        if('name' in request){
+            message.success("Registro agregado exitosamente")
             handleModal()
             handleRefresh()
         }
@@ -143,12 +159,49 @@ function StationsPage() {
     const handleRefresh = () => setRefresh(!refresh)
 
 
+    const [form] = Form.useForm()
+    const [selectedRecord, setSelectedRecord] = useState(null)
+
+
+    const columns = [
+        {
+            title: 'Nombre',
+            dataIndex: 'name',
+            key: 'name'
+        },
+        {
+            title: "Acciones",
+            key: "x",
+            render: (record: any) => (
+                <Button onClick={() => 
+                    handleOpenModal(record)}>
+                        Editar
+                </Button>
+            )
+        }
+    ]
+
+    const handleOpenModal = (record: any = null) => {
+        if(record!==null){
+            const {name } = record;
+
+            form.setFieldValue('name', name)
+
+            setSelectedRecord(record)
+       
+        }
+   
+        setOpenModal(true)
+    } 
+    
+
+
     return (
         <Card title="Estaciones de servicio" extra={<Button onClick={handleModal} type="primary">Nueva estación de servicio</Button>} >
             <Table loading={loading} dataSource={data} columns={columns} />
 
             <Modal title="Estación de servicio" open={openModal} onCancel={handleModal} footer={null}>
-                <StationForm handleModal={handleModal} handleRefresh={handleRefresh} />
+                <StationForm handleModal={handleModal} handleRefresh={handleRefresh} form={form} selectedRecord={selectedRecord} />
             </Modal>
 
         </Card>
