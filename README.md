@@ -8,3 +8,4 @@ VITE_API_URL=http://localhost:8080
 VITE_HEME_API_URL=http://localhost:8081
 ```
 5. Ejecutar npm run dev
+6. El proyecto debe estar ejecutando en localhost:5173
