@@ -55,6 +55,12 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
                 >
                     Solicitudes de movilización
                 </Menu.Item>
+            </>
+
+            {
+                isSuperAdmin.length > 0 && (
+                    <>
+
                 <Menu.Item
                     key="4"
                     className="navbar-brand"
@@ -62,11 +68,6 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
                 >
                     Solicitudes de Mantenimiento
                 </Menu.Item>
-            </>
-
-            {
-                isSuperAdmin.length > 0 && (
-                    <>
                         <Typography.Text style={{ color: 'white' }} >Administración</Typography.Text>
                         <Menu.Item
                             key="6"

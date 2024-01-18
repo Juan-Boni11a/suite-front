@@ -16,30 +16,9 @@ function Dashboard() {
 
     const [loadingBusyDrivers, setLoadingBusyDrivers] = useState<any>(true)
 
-    const vData = {
-        labels: ['Disponibles', 'Ocupados'],
-        datasets: [
-            {
-                data: [30, 70], // Reemplaza con tus datos reales
-                backgroundColor: ['#36A2EB', '#FF6384'],
-                hoverBackgroundColor: ['#36A2EB', '#FF6384'],
-            },
-        ],
-    };
 
-
-    const dData = {
-        labels: ['Disponibles', 'Ocupados'],
-        datasets: [
-            {
-                data: [65, 35], // Reemplaza con tus datos reales
-                backgroundColor: ['#36A2EB', '#FF6384'],
-                hoverBackgroundColor: ['#36A2EB', '#FF6384'],
-            },
-        ],
-    };
-
-
+    const [driversInMovilization, setDriversInMovilization] = useState<any>([])
+    const [loadingDriversInMovilization, setLoadingDriversInMovilization] = useState(true)
 
     const columns = [
         {
@@ -62,55 +41,119 @@ function Dashboard() {
             key: "x",
             render: (record: any) => <span>{record.emitPlace + "-" + record.expiryPlace}</span>
         },
+        {
+            title: "Fecha de salida",
+            key: "x",
+            render: (record: any) => <span>{record.emitDate + "-" + record.emitHour}</span>
+        },
+        {
+            title: "Fecha de llegada",
+            key: "x",
+            render: (record: any) => <span>{record.expiryDate + "-" + record.expiryHour}</span>
+        },
+
     ];
 
 
     async function initialRequest() {
 
-        const requestAll = await getData('api/vehicles')
-        let totalVehicles = 1;
-        if (Array.isArray(requestAll)) {
-            totalVehicles = requestAll.length
-        }
+        
 
-        const requestFree = await getData('api/vehicles/free')
-        let freeAverage = 0;
-        if (Array.isArray(requestFree)) {
-            freeAverage = (requestFree.length / totalVehicles) * 100
-        }
+        const requestAllVehicles = await getData('api/vehicles/busy')
+        
+        if('freeVehicles' in requestAllVehicles){
+            const {busyVehicles, freeVehicles} = requestAllVehicles 
+            const totalVehicles = busyVehicles.length + freeVehicles.length
+            
+            let busyVehiclesAverage = (busyVehicles.length / totalVehicles) * 100
 
-        const requestBusy = await getData('api/vehicles/busy')
-        let busyAverage = 0;
-        if (Array.isArray(requestBusy)) {
-            busyAverage = (requestBusy.length / totalVehicles) * 100
-        }
+            let freeVehiclesAverage = (freeVehicles.length / totalVehicles) * 100
 
-
-
-        if (freeAverage + busyAverage === 100) {
             setVehiclesData({
                 labels: ['Disponibles', 'Ocupados'],
                 datasets: [
                     {
-                        data: [freeAverage, busyAverage],
+                        data: [freeVehiclesAverage, busyVehiclesAverage],
                         backgroundColor: ['#36A2EB', '#FF6384'],
                         hoverBackgroundColor: ['#36A2EB', '#FF6384'],
                     }
                 ]
             })
-            setLoadingVdata(false)
+
+            setLoadingVdata(false)  
         }
 
 
-        let totalDrivers = 1;
-        const requestAllUsers = await getData('api/users')
-        if (Array.isArray(requestAllUsers)) {
-            const drivers = requestAllUsers.filter((u: any) => u.roles.find((r: any) => r.id === 3))
-            totalDrivers = drivers.length
+
+        const requestAllDrivers = await getData('api/users/busyDrivers')
+        
+        if('freeDrivers' in requestAllDrivers){
+            const {busyDrivers, freeDrivers} = requestAllDrivers 
+            const totalDrivers = busyDrivers.length + freeDrivers.length
+            let busyDriversAverage = (busyDrivers.length / totalDrivers) * 100
+
+            let freeDriversAverage = (freeDrivers.length / totalDrivers) * 100
+
+            setDriversData({
+                labels: ['Disponibles', 'Ocupados'],
+                datasets: [
+                    {
+                        data: [freeDriversAverage, busyDriversAverage],
+                        backgroundColor: ['#36A2EB', '#FF6384'],
+                        hoverBackgroundColor: ['#36A2EB', '#FF6384'],
+                    }
+                ]
+            })
+
+            setLoadingDdata(false)  
         }
 
+        const requestDriversInMovilization = await getData('api/users/driversInMovilization')
+        if (Array.isArray(requestDriversInMovilization[0])) {
 
-        const requestBusyDrivers = await getData('api/users/busyDrivers')
+            let objetosCombinados = [];
+
+            for (let i = 0; i < requestDriversInMovilization[0].length; i += 2) {
+                if (i + 1 < requestDriversInMovilization[0].length) {
+                    let objetoCombinado = { ...requestDriversInMovilization[0][i], ...requestDriversInMovilization[0][i + 1] };
+                    objetosCombinados.push(objetoCombinado);
+                } else {
+                    // Si hay un número impar de objetos, el último objeto se agrega sin combinar
+                    objetosCombinados.push(requestDriversInMovilization[0][i]);
+                }
+            }
+
+            console.log('objetos combinados', objetosCombinados)
+            setDriversInMovilization(objetosCombinados)
+            setLoadingDriversInMovilization(false)
+        }
+
+        /*
+        const requestFreeDrivers = await getData('api/users/freeDrivers')
+        if(Array.isArray(requestFreeDrivers)){
+            let busyDriversAverage = (requestBusyDrivers.length / totalDrivers) * 100
+
+            let freeDriversAverage = (requestFreeDrivers.length / totalDrivers) * 100
+
+            console.log('bys', busyDriversAverage)
+
+            console.log('fee', freeDriversAverage)
+            setDriversData({
+                labels: ['Disponibles', 'Ocupados'],
+                datasets: [
+                    {
+                        data: [freeDriversAverage, busyDriversAverage],
+                        backgroundColor: ['#36A2EB', '#FF6384'],
+                        hoverBackgroundColor: ['#36A2EB', '#FF6384'],
+                    }
+                ]
+            })
+
+            setLoadingDdata(false)
+        }
+        */
+
+        /*
         if (Array.isArray(requestBusyDrivers[0])) {
 
             let objetosCombinados = [];
@@ -129,8 +172,7 @@ function Dashboard() {
             setBusyDrivers(objetosCombinados)
             setLoadingBusyDrivers(false)
         }
-
-        const requestFreeDrivers = await getData('api/users/freeDrivers')
+        
         if (Array.isArray(requestFreeDrivers[0])) {
 
 
@@ -179,6 +221,7 @@ function Dashboard() {
 
             setLoadingDdata(false)
         }
+        */
     }
 
     useEffect(() => {
@@ -191,7 +234,7 @@ function Dashboard() {
             <Row>
                 <Col span={24}>
                     <Card title="Conductores en servicio">
-                        <Table columns={columns} dataSource={busyDrivers} loading={loadingBusyDrivers} />
+                        <Table columns={columns} dataSource={driversInMovilization} loading={loadingDriversInMovilization} />
                     </Card>
 
                 </Col>

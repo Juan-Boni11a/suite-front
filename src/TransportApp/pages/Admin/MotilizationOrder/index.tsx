@@ -5,7 +5,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Button, Card, Dropdown, Form, MenuProps, Modal, Space, Table, } from 'antd'
+import { Button, Card, Dropdown, Form, MenuProps, Modal, Space, Table, Tag, } from 'antd'
 import { useContext, useEffect, useState } from 'react'
 // import { getData } from '../../services/getData'
 import { DownOutlined, PlusOutlined } from '@ant-design/icons'
@@ -34,8 +34,16 @@ const Filters = ({ filterBy }: any) => {
         {
             key: '2',
             label: (
-                <a rel="noopener noreferrer" onClick={() => filterBy('APPROVED')}>
+                <a rel="noopener noreferrer" onClick={() => filterBy('ACCEPTED')}>
                     Aprobadas
+                </a>
+            ),
+        },
+        {
+            key: '4',
+            label: (
+                <a rel="noopener noreferrer" onClick={() => filterBy('REJECTED')}>
+                    Rechazadas
                 </a>
             ),
         },
@@ -108,17 +116,15 @@ const MovilizationOrderPage = () => {
 
 
     function handleFilterBy(value: any) {
-        if (value === "PENDING") {
-            const pending = data.filter((req: any) => req.driver === null)
+        if (value !== "ALL") {
+            const pending = data.filter((req: any) => req.status === value)
             setFilteredData(pending)
             return
         }
 
-        //SOLO PARA PROBAR HASTA QUE YA HAYAN APROBADAS
-        if (value === "APPROVED") {
-            const pending = data.filter((req: any) => req.driver !== null)
-            setFilteredData(pending)
-            return
+        if (value === "ALL") {
+            setFilteredData(data)
+            return 
         }
     }
 
@@ -129,6 +135,19 @@ const MovilizationOrderPage = () => {
     }
 
     const columns = [
+        {
+            title: "Identificador",
+            dataIndex: "",
+            key: "identifier",
+            render: (record: any) => (
+                record.code !== null && (
+                    <span>
+                        {record.code}
+                    </span>
+                )
+
+            ),
+        },
         {
             title: "Cliente",
             dataIndex: "",
@@ -151,7 +170,25 @@ const MovilizationOrderPage = () => {
             title: "Hora de salida",
             dataIndex: "emitHour",
             key: "emitHour",
-        }
+        },
+        {
+            title: "Estado",
+            dataIndex: "",
+            key: "x",
+            render: (record: any) => (
+                'status' in record && (
+                    <>
+                        {record.status === "REJECTED" && <Tag color="red">RECHAZADA</Tag>}
+
+                        {record.status === "PENDING" && <Tag color="orange">PENDIENTE</Tag>}
+
+                        {record.status === "ACCEPTED" && <Tag color="green">ACEPTADA</Tag>}
+
+                    </>
+                )
+
+            ),
+        },
     ];
 
     if (isAdmin) {

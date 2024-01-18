@@ -3,12 +3,14 @@ import DriversSelector from "../../Modals/DriversSelector";
 import { useContext, useEffect, useState } from "react";
 import CarsSelector from "../../Modals/CarsSelector";
 import MantenimientoSelector from "../../Modals/MantenimientoSelector";
-import Barcode from "react-barcode";
+// import Barcode from "react-barcode";
 import { getData } from "../../../../services/common/getData";
 import { AuthContext } from "../../../../context/AuthContext";
 import { transformDate, transformTime } from "../../../../utils/general";
 import { putData } from "../../../../services/common/putData";
 import { postData } from "../../../../services/common/postData";
+import MaintenanceLogs from "../../Logs/Maintenances";
+import * as dayjs from 'dayjs'
 
 
 
@@ -76,7 +78,7 @@ function SolicitudMantenimientoForm({ selectedRequest, handleModal, handleRefres
     */
 
     const [barCodeValue, setBarCodeValue] = useState<any>('')
-    
+
 
     function handleGenerateBarCode() {
         const randomValue = Math.floor(Math.random() * 1000000000);
@@ -97,10 +99,11 @@ function SolicitudMantenimientoForm({ selectedRequest, handleModal, handleRefres
                 }
             })
             setUsers(usersToSelect)
+        }
 
-            const filterDrivers = usersRequest.filter((u: any) => u.roles.find((role: any) => role.id === 3))
-            console.log('dt', filterDrivers)
-            const driversToModal = filterDrivers.map((driver: any) => {
+        const driversRequest = await getData('api/users/busyDrivers')
+        if ('freeDrivers' in driversRequest) {
+            const driversToModal = driversRequest.freeDrivers.map((driver: any) => {
                 return {
                     ...driver,
                     fullName: driver.name + " " + driver.lastname,
@@ -109,13 +112,15 @@ function SolicitudMantenimientoForm({ selectedRequest, handleModal, handleRefres
                 }
             })
             setDrivers(driversToModal)
+
         }
 
-        const vehiclesRequest = await getData('api/vehicles')
-        console.log('ur', vehiclesRequest)
-        if (Array.isArray(vehiclesRequest)) {
-            setVehicles(vehiclesRequest)
+        const vehiclesRequest = await getData('api/vehicles/busy')
+        if ('freeVehicles' in vehiclesRequest) {
+            setVehicles(vehiclesRequest.freeVehicles)
         }
+
+
 
 
         const stationsRequest = await getData('api/serviceStations')
@@ -146,9 +151,9 @@ function SolicitudMantenimientoForm({ selectedRequest, handleModal, handleRefres
 
 
     useEffect(() => {
-        if(selectedRequest){
+        if (selectedRequest) {
             setBarCodeValue('barCode' in selectedRequest ? selectedRequest.barCode : '')
-    
+
         }
     }, [selectedRequest])
 
@@ -167,7 +172,7 @@ function SolicitudMantenimientoForm({ selectedRequest, handleModal, handleRefres
             initiatorId: { id: selectedRequest ? selectedRequest.initiatorId?.id : user.id },
             requester: { id: selectedRequest ? selectedRequest.requester?.id : user.id },
             currentActivity,
-            currentResponsible: { id: currentResponsible },
+            currentResponsible: { id: user && user.id },
             date: transformDate(date),
             hour: transformTime(hour),
             driver: { id: driverId.length > 0 ? driverId[0].id : 1 },
@@ -181,13 +186,16 @@ function SolicitudMantenimientoForm({ selectedRequest, handleModal, handleRefres
         if (selectedRequest) {
             const request = await putData('api/maintenanceRequests/' + selectedRequest.id, cleanValues)
             if ('requester' in request) {
-                
+
                 values.activities.map(async (a: any) => {
                     await postData('api/maintenanceRequests/' + request.id + "/activity/" + a, {})
                 })
-                
-                message.success("Orden creada exitosamente")
-                
+
+                const buildPdf = await postData('api/maintenanceRequests/' + request.id + "/buildPdf", {})
+
+
+                message.success("Orden editada exitosamente")
+
                 setSubmitting(false)
                 handleModal()
                 handleRefresh()
@@ -210,11 +218,15 @@ function SolicitudMantenimientoForm({ selectedRequest, handleModal, handleRefres
                     await postData('api/maintenanceRequests/' + request.id + "/activity/" + a, {})
                 })
 
+                const buildPdf = await postData('api/maintenanceRequests/' + request.id + "/buildPdf", {})
+
                 message.success("Solicitud creada exitosamente")
                 setSubmitting(false)
                 handleModal()
                 handleRefresh()
                 return
+
+
 
             } else {
                 message.error("Ha ocurrido un error :(")
@@ -231,6 +243,33 @@ function SolicitudMantenimientoForm({ selectedRequest, handleModal, handleRefres
 
     }
 
+
+    const disabledDate = (current: any) => {
+        return current && dayjs(current).isBefore(dayjs(), 'day');
+    };
+
+    const disabledHours = () => {
+        const currentHour = dayjs().hour();
+        return Array.from({ length: currentHour }, (_, index) => index);
+    };
+
+    const disabledMinutes = (selectedHour: any) => {
+        if (selectedHour === dayjs().hour()) {
+            const currentMinute = dayjs().minute();
+            return Array.from({ length: currentMinute }, (_, index) => index);
+        }
+        return [];
+    };
+
+    const disabledSeconds = (selectedHour: any, selectedMinute: any) => {
+        if (selectedHour === dayjs().hour() && selectedMinute === dayjs().minute()) {
+            const currentSecond = dayjs().second();
+            return Array.from({ length: currentSecond }, (_, index) => index);
+        }
+        return [];
+    };
+
+
     return (
         <Form form={form} onFinish={handleSubmit}>
             <Form.Item label="Iniciador" name="initiatorId">
@@ -243,15 +282,19 @@ function SolicitudMantenimientoForm({ selectedRequest, handleModal, handleRefres
             </Form.Item>
 
             <Form.Item label="Responsable actual" name="currentResponsible">
-                <Select options={users} />
+                <Select options={users} defaultValue={user && user.id} />
             </Form.Item>
 
             <Form.Item label="Fecha de mantenimiento" name="date">
-                <DatePicker />
+                <DatePicker disabledDate={disabledDate} />
             </Form.Item>
 
             <Form.Item label="Hora de mantenimiento" name="hour">
-                <DatePicker picker="time"  />
+                <DatePicker picker="time"
+                    disabledHours={disabledHours}
+                    disabledMinutes={disabledMinutes}
+                    disabledSeconds={disabledSeconds}
+                />
             </Form.Item>
 
             <Typography.Text>Vehículo</Typography.Text>
@@ -299,23 +342,34 @@ function SolicitudMantenimientoForm({ selectedRequest, handleModal, handleRefres
                 <Select options={activities} mode="multiple" />
             </Form.Item>
 
-            <Typography.Text>Código de barra</Typography.Text>
-            <br />
-            <Button onClick={handleGenerateBarCode} type="primary">Generar código</Button>
-            <br />
-            <Barcode value={barCodeValue} />
-            <br />
+            {
+                /*
+                <Typography.Text>Código de barra</Typography.Text>
+                <br />
+                <Button onClick={handleGenerateBarCode} type="primary">Generar código</Button>
+                <br />
+                <Barcode value={barCodeValue} />
+                <br />
+                */
+            }
             <Form.Item label="Acciones a tomar" name="status">
                 <Select options={actions} />
             </Form.Item>
 
+            {selectedRequest && (
+                <MaintenanceLogs requestId={selectedRequest.id} />
+            )}
 
-            <Form.Item>
-                <Button type="primary" htmlType="submit" loading={submitting}>
-                    Guardar
-                </Button>
-            </Form.Item>
 
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'end', marginTop: 12 }}>
+
+                <Form.Item>
+                    <Button type="primary" htmlType="submit" loading={submitting}>
+                        Guardar
+                    </Button>
+                </Form.Item>
+
+            </div>
             <Modal open={showDriversModal} footer={null} title="Máster de Conductores" onCancel={handleDriversModal}>
                 <DriversSelector setSomeValues={setSomeValues} handleDriversModal={handleDriversModal} drivers={drivers} />
             </Modal>

@@ -8,7 +8,7 @@ function SelectionPage() {
 
   const navigate = useNavigate();
 
-  const {user}:any = useContext(AuthContext)
+  const { user }: any = useContext(AuthContext)
 
   const isAdmin = user.roles[0].name !== "CLIENTE" ? true : false
 
@@ -38,9 +38,9 @@ function SelectionPage() {
       </Col>
       <Col span={12}>
         <Card onClick={() => {
-          if(isAdmin){
+          if (isAdmin) {
             navigate("/hemerotec")
-          }else{
+          } else {
             navigate("/hemerotec/noticias")
           }
         }} >
@@ -54,18 +54,21 @@ function SelectionPage() {
           </Row>
         </Card>
       </Col>
-      <Col span={24}>
-        <Card onClick={() => navigate("/usersManagement")} >
-          <Row style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} >
-            <Col span={8}>
-              <img src="./hmLogin.png" alt="" style={{ height: 260, width: '100%' }} />
-            </Col>
-            <Col span={16}>
-              <Typography.Title>Administración de Usuarios</Typography.Title>
-            </Col>
-          </Row>
-        </Card>
-      </Col>
+      {isAdmin &&
+        <Col span={24}>
+          <Card onClick={() => navigate("/usersManagement")} >
+            <Row style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} >
+              <Col span={8}>
+                <img src="./hmLogin.png" alt="" style={{ height: 260, width: '100%' }} />
+              </Col>
+              <Col span={16}>
+                <Typography.Title>Administración de Usuarios</Typography.Title>
+              </Col>
+            </Row>
+          </Card>
+        </Col>
+      }
+
     </Row>
   )
 }

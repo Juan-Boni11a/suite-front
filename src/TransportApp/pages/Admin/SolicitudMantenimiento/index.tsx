@@ -106,6 +106,19 @@ const SolicitudMantenimientoPage = () => {
 
     const columns = [
         {
+            title: "Identificador",
+            dataIndex: "",
+            key: "identifier",
+            render: (record: any) => (
+                record.code !== null && (
+                    <span>
+                        {record.code}
+                    </span>
+                )
+
+            ),
+        },
+        {
             title: "Conductor",
             dataIndex: "",
             key: "driver",

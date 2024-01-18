@@ -8,6 +8,7 @@ import { transformDate, transformTime } from "../../../../utils/general";
 import { AuthContext } from "../../../../context/AuthContext";
 import { postData } from "../../../../services/common/postData";
 import MovilizationLogs from "../../Logs/Movilizations";
+import * as dayjs from 'dayjs'
 
 
 
@@ -42,7 +43,7 @@ function MovilizationRequestForm({ selectedRequest, handleModal, handleRefresh, 
 
     const { user }: any = useContext(AuthContext)
 
-    
+
     const statusValue = Form.useWatch('status', form);
 
     const [showDriversModal, setShowDriversModal] = useState(false)
@@ -92,10 +93,11 @@ function MovilizationRequestForm({ selectedRequest, handleModal, handleRefresh, 
                 }
             })
             setUsers(usersToSelect)
+        }
 
-            const filterDrivers = usersRequest.filter((u: any) => u.roles.find((role: any) => role.id === 3))
-            console.log('dt', filterDrivers)
-            const driversToModal = filterDrivers.map((driver: any) => {
+        const driversRequest = await getData('api/users/busyDrivers')
+        if ('freeDrivers' in driversRequest) {
+            const driversToModal = driversRequest.freeDrivers.map((driver: any) => {
                 return {
                     ...driver,
                     fullName: driver.name + " " + driver.lastname,
@@ -145,10 +147,10 @@ function MovilizationRequestForm({ selectedRequest, handleModal, handleRefresh, 
             setMovilizationValidities(validitiesToSelect)
         }
 
-        const vehiclesRequest = await getData('api/vehicles')
-        console.log('ur', vehiclesRequest)
-        if (Array.isArray(vehiclesRequest)) {
-            setVehicles(vehiclesRequest)
+
+        const vehiclesRequest = await getData('api/vehicles/busy')
+        if ('freeVehicles' in vehiclesRequest) {
+            setVehicles(vehiclesRequest.freeVehicles)
         }
     }
 
@@ -172,7 +174,7 @@ function MovilizationRequestForm({ selectedRequest, handleModal, handleRefresh, 
                 cleanValues = {
                     ...cleanValues,
                     currentActivity,
-                    currentResponsible: { id: currentResponsible },
+                    currentResponsible: { id: user && user.id },
                     driver: { id: driverId.length > 0 ? driverId[0].id : 1 },
                     vehicle: { id: vehicleId.length > 0 ? vehicleId[0].id : 1 }
                 }
@@ -251,6 +253,51 @@ function MovilizationRequestForm({ selectedRequest, handleModal, handleRefresh, 
     const isAdmin = user.roles[0].name !== "CLIENTE" ? true : false
 
     console.log('s', selectedRequest)
+
+
+    const disabledDate = (current: any) => {
+        return current && dayjs(current).isBefore(dayjs(), 'day');
+    };
+
+    const disabledHours = () => {
+        const currentHour = dayjs().hour();
+        return Array.from({ length: currentHour }, (_, index) => index);
+    };
+
+    const disabledMinutes = (selectedHour: any) => {
+        if (selectedHour === dayjs().hour()) {
+            const currentMinute = dayjs().minute();
+            return Array.from({ length: currentMinute }, (_, index) => index);
+        }
+        return [];
+    };
+
+    const disabledSeconds = (selectedHour: any, selectedMinute: any) => {
+        if (selectedHour === dayjs().hour() && selectedMinute === dayjs().minute()) {
+            const currentSecond = dayjs().second();
+            return Array.from({ length: currentSecond }, (_, index) => index);
+        }
+        return [];
+    };
+
+    const [startDate, setStartDate] = useState<any>(null);
+
+    const handleStartDateChange = (date: any, dateString: any) => {
+        // Actualizar el estado con la fecha seleccionada en el primer DatePicker
+        setStartDate(dayjs(dateString));
+      };
+
+      const disabledEndDate = (current: any) => {
+        // Si no se ha seleccionado ninguna fecha de inicio, deshabilitar todas las fechas
+        if (!startDate) {
+          return false;
+        }
+    
+        // Solo permitir fechas a partir de la fecha seleccionada en el primer DatePicker
+        return current && current.isBefore(startDate, 'day');
+      };
+
+
     return (
         <Form form={form} onFinish={handleSubmit} >
             {isAdmin && (
@@ -271,7 +318,7 @@ function MovilizationRequestForm({ selectedRequest, handleModal, handleRefresh, 
 
 
                             <Form.Item label="Responsable actual" name="currentResponsible">
-                                <Select options={users} />
+                                <Select options={users} defaultValue={user && user.id} />
                             </Form.Item>
 
                             <Form.Item label="Conductor" name="driver">
@@ -324,33 +371,46 @@ function MovilizationRequestForm({ selectedRequest, handleModal, handleRefresh, 
                     <Form.Item label="Vigente de" name="validity">
                         <Select options={movilizationValidities} />
                     </Form.Item>
-                    <Typography.Text>Datos de Emisión</Typography.Text>
+                    <Typography.Text>Datos de Origen</Typography.Text>
 
                     <Form.Item label="Lugar" name="emitPlace">
                         <Input />
                     </Form.Item>
 
                     <Form.Item label="Fecha" name="emitDate">
-                        <DatePicker />
+                        <DatePicker 
+                            onChange={handleStartDateChange}
+                            disabledDate={disabledDate} 
+                        />
                     </Form.Item>
 
                     <Form.Item label="Hora" name="emitHour">
-                        <DatePicker picker="time" />
+                        <DatePicker 
+                            picker="time"
+                            disabledHours={disabledHours}
+                            disabledMinutes={disabledMinutes}
+                            disabledSeconds={disabledSeconds} 
+                        />
                     </Form.Item>
 
 
-                    <Typography.Text>Datos de Caducidad</Typography.Text>
+                    <Typography.Text>Datos de Destino</Typography.Text>
 
                     <Form.Item label="Lugar" name="expiryPlace">
                         <Input />
                     </Form.Item>
 
                     <Form.Item label="Fecha" name="expiryDate">
-                        <DatePicker />
+                        <DatePicker disabledDate={disabledEndDate}  />
                     </Form.Item>
 
                     <Form.Item label="Hora" name="expiryHour">
-                        <DatePicker picker="time" />
+                        <DatePicker 
+                            picker="time" 
+                            disabledHours={disabledHours}
+                            disabledMinutes={disabledMinutes}
+                            disabledSeconds={disabledSeconds} 
+                        />
                     </Form.Item>
 
 
