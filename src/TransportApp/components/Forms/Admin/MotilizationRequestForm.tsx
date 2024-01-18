@@ -9,6 +9,7 @@ import { AuthContext } from "../../../../context/AuthContext";
 import { postData } from "../../../../services/common/postData";
 import MovilizationLogs from "../../Logs/Movilizations";
 import * as dayjs from 'dayjs'
+import { filterByRestrictions } from "../../../utils/vehicles";
 
 
 
@@ -150,7 +151,9 @@ function MovilizationRequestForm({ selectedRequest, handleModal, handleRefresh, 
 
         const vehiclesRequest = await getData('api/vehicles/busy')
         if ('freeVehicles' in vehiclesRequest) {
-            setVehicles(vehiclesRequest.freeVehicles)
+            const result = filterByRestrictions(vehiclesRequest.freeVehicles, selectedRequest.emitDate, selectedRequest.emitHour, selectedRequest.expiryDate, selectedRequest.expiryHour)
+            console.log('result', result)
+            setVehicles(result)
         }
     }
 

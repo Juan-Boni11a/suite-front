@@ -94,9 +94,9 @@ function CarsSelector({ setSomeValues, handleCarsModal, vehicles }: any) {
                             <Typography.Paragraph>Marca: {selectedCar.brand}</Typography.Paragraph>
                             <Typography.Paragraph>Modelo: {selectedCar.model}</Typography.Paragraph>
                             <Typography.Paragraph>Color: {selectedCar.color}</Typography.Paragraph>
-                            <Typography.Paragraph>Motor: {selectedCar.motor}</Typography.Paragraph>
+                            <Typography.Paragraph>Motor: {selectedCar.engine}</Typography.Paragraph>
                             <Typography.Paragraph>No. Matrícula: {selectedCar.enrollment}</Typography.Paragraph>
-                            <Typography.Paragraph>Estado: En uso</Typography.Paragraph>
+                            
                         </div>
                     )}
                 </Col>
