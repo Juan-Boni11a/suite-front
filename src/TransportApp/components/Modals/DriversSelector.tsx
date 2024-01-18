@@ -90,7 +90,8 @@ function DriversSelector({ setSomeValues, handleDriversModal, drivers }: any) {
                         <div>
                             <Typography.Paragraph>Estado: {selectedDriver.status}</Typography.Paragraph>
                             <Typography.Paragraph>Cédula: {selectedDriver.ci}</Typography.Paragraph>
-                            <Typography.Paragraph>Expiración: {selectedDriver.ciExpiry}</Typography.Paragraph>
+                            <Typography.Paragraph>Tipo de licencia: {selectedDriver.licenseType !== null && selectedDriver.licenseType}</Typography.Paragraph>
+                            <Typography.Paragraph>Expiración: {selectedDriver.licenceExpiryDate !== null && selectedDriver.licenceExpiryDate}</Typography.Paragraph>
                         </div>
                     )}
                 </Col>

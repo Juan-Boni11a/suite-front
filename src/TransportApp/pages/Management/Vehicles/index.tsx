@@ -87,16 +87,7 @@ const columns = [
         title: "No. matrícula",
         dataIndex: "enrollment",
         key: "enrollment",
-    },
-    {
-        title: "Estado",
-        key: "status",
-        render: (record:any) => (
-            <>
-            EN USO
-            </>
-        ),
-    },
+    }
 ];
 
 

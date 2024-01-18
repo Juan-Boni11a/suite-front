@@ -1,8 +1,13 @@
-import { Button, Col, Form, Row, Select, Typography, message } from "antd"
+import { Button, Col, DatePicker, Form, Row, Select, Typography, message } from "antd"
 import { useEffect, useLayoutEffect, useState } from "react"
 import { getData } from "../../../services/common/getData"
 import { postData } from "../../../services/common/postData"
+import * as dayjs from 'dayjs'
+import { putData } from "../../../services/common/putData"
+import { transformDate } from "../../../utils/general"
 
+
+const defaultRules = [{ required: true, message: 'Información requerida' }]
 
 
 function RoleAssignmentForm({ selectedUser, handleModal, handleRefresh, roleForm }: any) {
@@ -34,7 +39,7 @@ function RoleAssignmentForm({ selectedUser, handleModal, handleRefresh, roleForm
     }
 
 
-    const handleFinish = (values: any) => {
+    const handleFinish = async (values: any) => {
 
         const currentRoleIds = selectedUser.roles.map((role: any) => role.id)
 
@@ -46,6 +51,15 @@ function RoleAssignmentForm({ selectedUser, handleModal, handleRefresh, roleForm
         });
 
         message.success("Roles asignados exitosamente")
+
+
+        if(values.roles.filter((roleId: any) => roleId === 3).length > 0){
+            const updateUser = await putData('api/users/' + selectedUser.id + '/driver', {
+                licenseType: values.licenseType, 
+                licenceExpiryDate: transformDate(values.licenceExpiryDate)
+            })
+        }
+
         handleModal()
         handleRefresh()
     }
@@ -75,6 +89,10 @@ function RoleAssignmentForm({ selectedUser, handleModal, handleRefresh, roleForm
         initialRequest()
     }, [])
 
+    const disabledDate = (current: any) => {
+        return current && dayjs(current).isBefore(dayjs(), 'day');
+    };
+
     return (
         <>
             <Typography.Text style={{ paddingBottom: 24 }}>Usuario Seleccionado: {selectedUser.name} {" "} {selectedUser.lastname} </Typography.Text>
@@ -98,12 +116,43 @@ function RoleAssignmentForm({ selectedUser, handleModal, handleRefresh, roleForm
                     </Col>
                 </Row>
 
+                {
+                    selectedRoles.filter((sr: any) => sr.id === 3).length > 0 && (
+                        <Row>
 
-                <Row justify="center">
+                            <Col span={10} offset={1}>
+
+                                <Form.Item label="Tipo de licencia" name="licenseType" rules={defaultRules} >
+                                    <Select options={[
+                                        { label: 'A', value: 'A' },
+                                        { label: 'B', value: 'B' },
+                                        { label: 'F', value: 'F' },
+                                        { label: 'A1', value: 'A1' },
+                                        { label: 'C', value: 'C' },
+                                        { label: 'C1', value: 'C1' },
+                                        { label: 'D', value: 'D' },
+                                        { label: 'D1', value: 'D1' },
+                                        { label: 'E', value: 'E' },
+                                        { label: 'E1', value: 'E1' },
+                                        { label: 'G', value: 'G' }
+                                    ]}
+                                    />
+                                </Form.Item>
+                            </Col>
+                            <Col span={10} offset={1}>
+                                <Form.Item label="Fecha" name="licenceExpiryDate" rules={defaultRules}>
+                                    <DatePicker disabledDate={disabledDate} />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                    )}
+
+
+                < Row justify="center" >
                     <Button type="primary" htmlType="submit">Guardar</Button>
                 </Row>
 
-            </Form>
+            </Form >
         </>
     )
 
