@@ -36,6 +36,13 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
     return (
         <Menu theme={theme} mode="inline" className="auth-menu">
             <>
+                <Menu.Item
+                    key="12"
+                    className="navbar-brand"
+                    onClick={() => goToPage("/selection")}
+                >
+                    Inicio
+                </Menu.Item>
                 {
                     isSuperAdmin.length > 0 && (
 
@@ -61,13 +68,13 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
                 isSuperAdmin.length > 0 && (
                     <>
 
-                <Menu.Item
-                    key="4"
-                    className="navbar-brand"
-                    onClick={() => goToPage("/transports/solicitudMantenimiento")}
-                >
-                    Solicitudes de Mantenimiento
-                </Menu.Item>
+                        <Menu.Item
+                            key="4"
+                            className="navbar-brand"
+                            onClick={() => goToPage("/transports/solicitudMantenimiento")}
+                        >
+                            Solicitudes de Mantenimiento
+                        </Menu.Item>
                         <Typography.Text style={{ color: 'white' }} >Administración</Typography.Text>
                         <Menu.Item
                             key="6"

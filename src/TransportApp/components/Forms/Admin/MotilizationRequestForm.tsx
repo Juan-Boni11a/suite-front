@@ -264,8 +264,9 @@ function MovilizationRequestForm({ selectedRequest, handleModal, handleRefresh, 
 
     const disabledHours = () => {
         const currentHour = dayjs().hour();
-        return Array.from({ length: currentHour }, (_, index) => index);
-    };
+        // Deshabilitar todas las horas antes de la actual, antes de las 8am y después de las 6pm
+        return [...Array(currentHour).keys(), ...Array(8).keys(), ...Array.from({ length: 18 }, (_, index) => index + 19)];
+    };      
 
     const disabledMinutes = (selectedHour: any) => {
         if (selectedHour === dayjs().hour()) {

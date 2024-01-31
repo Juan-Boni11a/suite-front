@@ -41,7 +41,13 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
 
     return (
         <Menu theme={theme} mode="inline" className="auth-menu">
-
+            <Menu.Item
+                key="2"
+                className="navbar-brand"
+                onClick={() => goToPage("/selection")}
+            >
+                Inicio
+            </Menu.Item>
             {
                 isSuperAdmin.length > 0 && (
 
