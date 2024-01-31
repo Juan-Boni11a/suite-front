@@ -1,6 +1,6 @@
 import {
     Button, DatePicker, Form, List, Input, InputNumber, Radio, Modal, Row,
-    Select, Table, Typography, Upload, message, UploadProps, UploadFile, Card, Col, Divider
+    Select, Table, Typography, Upload, message, UploadProps, UploadFile, Card, Col, Divider, Descriptions
 } from "antd";
 import { useContext, useEffect, useState } from "react";
 import { postData } from "../../../services/common/postData";
@@ -19,14 +19,27 @@ import { AuthContext } from "../../../context/AuthContext";
 dayjs.locale('es')
 
 
-const users = [
-    { label: 'Eduardo', value: 'Eduardo' },
-    { label: 'Sarai', value: 'Sarai' }
+
+const sectors = [
+    {
+        label: 'Hidrocarburo',
+        value: 'Hidrocarburo',
+        subsectors: [
+            { label: 'Empresarial', value: "Empresarial" },
+            { label: 'Financiero', value: "Financiero" },
+        ]
+    },
+    {
+        label: 'Minas',
+        value: 'Minas',
+        subsectors: [
+            { label: 'Industrial', value: "Industrial" },
+            { label: 'Ambiental', value: "Ambiental" }
+        ]
+    },
 ]
-const subsectores = [
-    { label: 'Empresarial', value: "Empresarial" },
-    { label: 'Industrial', value: "Industrial" }
-]
+
+
 const tipoInformacion = [
     { label: 'Local', value: "Local" },
     { label: 'Actual', value: "Actual" }
@@ -35,6 +48,8 @@ const medioComunicacion = [
     { label: 'Digital', value: "Digital" },
     { label: 'Fisico', value: "Fisico" }
 ]
+
+const labelStyles = { fontWeight: 'bolder', color: 'black' }
 
 const RegisterNoticiasForm = () => {
     const [form] = Form.useForm()
@@ -287,65 +302,79 @@ const RegisterNoticiasForm = () => {
 
     const handleShowForm = () => setShowForm((prevState: any) => !prevState)
 
+    const currentDate = dayjs();
+
+    const sectorValue = Form.useWatch('sectorNoti', form);
+
+
     return (
         <Card title="" extra={<Button type="primary" onClick={handleShowForm}>Nueva noticia</Button>}>
             <Table dataSource={data} columns={newsColumns} />
             <Modal open={showForm} title="Nueva noticia" footer={null} width={"50%"} onCancel={handleShowForm}>
                 <Form form={form} onFinish={handleSubmit} >
                     <Row>
-                        <Col span={7}>
+                        <Col span={24}>
                             <Form.Item label="Fecha del registro" name="dateRegister">
-                                <DatePicker />
+                                <DatePicker defaultValue={currentDate} disabled={true} />
                             </Form.Item>
                         </Col>
 
-                        <Col span={7} offset={1}>
+                        <Col span={24} >
                             <Form.Item label="Nombre Usuario" name="nameResp">
                                 <Input disabled defaultValue={user && (user.name + " " + user.lastname)} />
                             </Form.Item>
                         </Col>
 
 
-                        <Col span={7} offset={1}>
+                        <Col span={24} >
                             <Form.Item label="Fecha de la noticia" name="emitNoticia">
                                 <DatePicker />
                             </Form.Item>
                         </Col>
 
-                        <Col span={7}>
+                        <Col span={24}>
                             <Form.Item label="Seccion" name="seccion">
                                 <InputNumber style={{ width: '90%' }} />
                             </Form.Item>
 
                         </Col>
 
-                        <Col span={7} offset={1}>
+                        <Col span={24} >
 
                             <Form.Item label="No. Pagina" name="numPage">
                                 <InputNumber style={{ width: '90%' }} />
                             </Form.Item>
                         </Col>
 
-                        <Col span={7} offset={1}>
+                        <Col span={24} >
                             <Form.Item label="Sector referente de la noticia" name="sectorNoti">
                                 <Radio.Group name="sectorNoti">
-                                    <Radio value="Hidrocarburos">Hidrocarburos</Radio>
-                                    <Radio value="Minas">Minas</Radio>
+                                    {sectors.map((s: any) =>
+                                        <Radio value={s.value}>{s.label}</Radio>
+                                    )}
                                 </Radio.Group>
                             </Form.Item>
                         </Col>
-                        <Col span={7}>
-                            <Form.Item label="Subsector" name="subsector" >
-                                <Select options={subsectores} />
-                            </Form.Item>
-                        </Col>
-                        <Col span={7} offset={1}>
+                        {typeof sectorValue !== "undefined" && sectors.filter((s: any) => s.value === sectorValue).length > 0 && (
+                            <Col span={24}>
+                                <Form.Item label="Subsector" name="subsector" >
+                                    <Radio.Group name="subsector">
+                                    {sectors.filter((s: any) => s.value === sectorValue)[0].subsectors.map((sub: any) => 
+                                        <Radio value={sub.value}>{sub.label}</Radio>
+                                    )}
+                                    </Radio.Group>
+
+                                </Form.Item>
+                            </Col>
+
+                        )}
+                        <Col span={24} >
                             <Form.Item label="Tipo de informacion" name="tipoInfo" >
                                 <Select options={tipoInformacion} />
                             </Form.Item>
 
                         </Col>
-                        <Col span={7} offset={1}>
+                        <Col span={24} >
                             <Form.Item label="Medio comunicacion" name="medioComunicacion" >
                                 <Select options={medioComunicacion} />
                             </Form.Item>
@@ -416,43 +445,61 @@ const RegisterNoticiasForm = () => {
                 </Form>
             </Modal>
 
-            <Modal open={showDetails} title="Noticia" footer={null} width="40%" onCancel={() => {
-                setSelectedRecord({})
-                setShowDetails(false)
-            }}>
+            <Modal
+                open={showDetails}
+                title="Noticia"
+                footer={null}
+                width={"40%"}
+                onCancel={() => {
+                    setSelectedRecord({})
+                    setShowDetails(false)
+                }}
+                style={{ overflowY: 'auto', maxHeight: 'calc(100vh - 80px)' }}
+
+            >
                 <Row>
                     {'image' in selectedRecord && selectedRecord.image !== null &&
-                        <Col span={10}>
-                            <img src={selectedRecord.image} width="100%" height={400} />
-
+                        <Col span={24} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                            <img src={selectedRecord.image} width="100%" style={{ maxHeight: 350, maxWidth: 350 }} />
                         </Col>
-
                     }
 
-                    <Col span={8} offset={1}>
-                        <span style={{ display: 'block', fontSize: 12 }} >Fecha: {dayjs(selectedRecord.dateRegister).format('DD MMMM YYYY hh:mm')}</span>
-                        <Divider />
-                        <span style={{ display: 'block', fontSize: 16, fontWeight: 'bolder' }} >Sector: {selectedRecord.sectorNoti}</span>
-                        <span style={{ display: 'block', fontSize: 16, fontWeight: 'bolder' }}>Subsector: {selectedRecord.subsector}</span>
-                        <span style={{ display: 'block', fontSize: 16, fontWeight: 'bolder' }}>Tipo de información: {selectedRecord.tipoInfo}</span>
-                        <span style={{ display: 'block', fontSize: 16, fontWeight: 'bolder' }}>Medio de comunicación: {selectedRecord.medioComunicacion}</span>
+                    <Col span={24} >
+                        <span style={{ display: 'block', fontSize: 12, marginTop: 12 }} >Fecha: {dayjs(selectedRecord.dateRegister).format('DD MMMM YYYY hh:mm')}</span>
                         <Divider />
 
-
-                        <span style={{ display: 'block', fontSize: 14 }}> Descripción de noticia: {selectedRecord.resumen}</span>
+                        <Descriptions title="" size="small">
+                            <Descriptions.Item span={1} labelStyle={labelStyles} label="Sector">{selectedRecord.sectorNoti}</Descriptions.Item>
+                            <Descriptions.Item span={1} labelStyle={labelStyles} label="Subsector">{selectedRecord.subsector}</Descriptions.Item>
+                            <Descriptions.Item span={1} labelStyle={labelStyles} label="Tipo de información">{selectedRecord.tipoInfo}</Descriptions.Item>
+                            <Descriptions.Item span={1} labelStyle={labelStyles} label="Medio de comunicación">{selectedRecord.medioComunicacion}</Descriptions.Item>
+                        </Descriptions>
 
                         <Divider />
 
-                        <span style={{ display: 'block', fontSize: 14 }}> Comentario: {selectedRecord.resumen}</span>
+                        <Descriptions title="" size="small">
+                            <Descriptions.Item span={1} labelStyle={labelStyles} label="Descripción de noticia">{selectedRecord.resumen}</Descriptions.Item>
+                        </Descriptions>
+
+                        <Divider />
+
+
+                        <Descriptions title="" size="small">
+                            <Descriptions.Item span={1} labelStyle={labelStyles} label="Comentario">{selectedRecord.comentario}</Descriptions.Item>
+                        </Descriptions>
 
                         <Divider />
 
                         {'opinions' in selectedRecord && (
                             <>
-                                <span style={{ display: 'block' }}>Opiniones: </span>
-                                {selectedRecord.opinions.length > 0 && selectedRecord.opinions.map((op: any) => (
-                                    <span style={{ display: 'block' }}>{op.name}: {op.opinion}</span>
-                                ))}
+                                {selectedRecord.opinions.length > 0 && (
+                                    <Descriptions title="Opiniones" size="small">
+                                        {selectedRecord.opinions.map((op: any) => (
+                                            <Descriptions.Item labelStyle={labelStyles} span={4} label={op.name}>{op.opinion}</Descriptions.Item>
+                                        ))}
+                                    </Descriptions>
+
+                                )}
                             </>
                         )}
 

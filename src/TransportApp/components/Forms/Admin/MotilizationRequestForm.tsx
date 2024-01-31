@@ -10,6 +10,7 @@ import { postData } from "../../../../services/common/postData";
 import MovilizationLogs from "../../Logs/Movilizations";
 import * as dayjs from 'dayjs'
 import { filterByRestrictions } from "../../../utils/vehicles";
+import MovilizationDetails from "../../MovilizationDetails";
 
 
 
@@ -40,6 +41,8 @@ const statusList = [
 
 
 function MovilizationRequestForm({ selectedRequest, handleModal, handleRefresh, form }: any) {
+
+    console.log('srrr', selectedRequest)
 
 
     const { user }: any = useContext(AuthContext)
@@ -266,7 +269,7 @@ function MovilizationRequestForm({ selectedRequest, handleModal, handleRefresh, 
         const currentHour = dayjs().hour();
         // Deshabilitar todas las horas antes de la actual, antes de las 8am y después de las 6pm
         return [...Array(currentHour).keys(), ...Array(8).keys(), ...Array.from({ length: 18 }, (_, index) => index + 19)];
-    };      
+    };
 
     const disabledMinutes = (selectedHour: any) => {
         if (selectedHour === dayjs().hour()) {
@@ -289,153 +292,158 @@ function MovilizationRequestForm({ selectedRequest, handleModal, handleRefresh, 
     const handleStartDateChange = (date: any, dateString: any) => {
         // Actualizar el estado con la fecha seleccionada en el primer DatePicker
         setStartDate(dayjs(dateString));
-      };
+    };
 
-      const disabledEndDate = (current: any) => {
+    const disabledEndDate = (current: any) => {
         // Si no se ha seleccionado ninguna fecha de inicio, deshabilitar todas las fechas
         if (!startDate) {
-          return false;
+            return false;
         }
-    
+
         // Solo permitir fechas a partir de la fecha seleccionada en el primer DatePicker
         return current && current.isBefore(startDate, 'day');
-      };
+    };
 
 
     return (
-        <Form form={form} onFinish={handleSubmit} >
-            {isAdmin && (
-                <>
-                    <Form.Item label="Estado" name="status">
-                        <Select options={statusList} />
-                    </Form.Item>
+        <>
+            <div style={{ marginTop: 30, marginBottom: 30}}>
+            <MovilizationDetails movilization={selectedRequest} />
+            </div>
+            <Form form={form} onFinish={handleSubmit} >
+                {isAdmin && (
+                    <>
+                        <Form.Item label="Estado" name="status">
+                            <Select options={statusList} />
+                        </Form.Item>
 
-                    {statusValue !== "REJECTED" && (
-                        <>
-                            <Form.Item label="Iniciador" name="initiatorId">
-                                <Input disabled defaultValue={user && (user.name + " " + user.lastname)} />
-                            </Form.Item>
+                        {statusValue !== "REJECTED" && (
+                            <>
+                                <Form.Item label="Iniciador" name="initiatorId">
+                                    <Input disabled defaultValue={user && (user.name + " " + user.lastname)} />
+                                </Form.Item>
 
-                            <Form.Item label="Actividad actual" name="currentActivity" >
-                                <Select options={activities} />
-                            </Form.Item>
-
-
-                            <Form.Item label="Responsable actual" name="currentResponsible">
-                                <Select options={users} defaultValue={user && user.id} />
-                            </Form.Item>
-
-                            <Form.Item label="Conductor" name="driver">
-                                <Input onClick={handleDriversModal} />
-                            </Form.Item>
-
-                            <Typography.Text>Vehículo</Typography.Text>
-                            <Form.Item label="No. Placa" name="plate">
-                                <Input onClick={handleCarsModal} />
-                            </Form.Item>
-                            <Form.Item label="Marca" name="brand">
-                                <Input disabled />
-                            </Form.Item>
-                            <Form.Item label="Modelo" name="model">
-                                <Input disabled />
-                            </Form.Item>
-                            <Form.Item label="Color" name="color">
-                                <Input disabled />
-                            </Form.Item>
-                            <Form.Item label="Motor" name="engine">
-                                <Input disabled />
-                            </Form.Item>
-                            <Form.Item label="No. Matrícula" name="enrollment">
-                                <Input disabled />
-                            </Form.Item>
-                        </>
-                    )}
+                                <Form.Item label="Actividad actual" name="currentActivity" >
+                                    <Select options={activities} />
+                                </Form.Item>
 
 
-                    {selectedRequest && (
-                        <MovilizationLogs requestId={selectedRequest.id} />
-                    )}
-                </>
-            )}
+                                <Form.Item label="Responsable actual" name="currentResponsible">
+                                    <Select options={users} defaultValue={user && user.id} />
+                                </Form.Item>
+
+                                <Form.Item label="Conductor" name="driver">
+                                    <Input onClick={handleDriversModal} />
+                                </Form.Item>
+
+                                <Typography.Text>Vehículo</Typography.Text>
+                                <Form.Item label="No. Placa" name="plate">
+                                    <Input onClick={handleCarsModal} />
+                                </Form.Item>
+                                <Form.Item label="Marca" name="brand">
+                                    <Input disabled />
+                                </Form.Item>
+                                <Form.Item label="Modelo" name="model">
+                                    <Input disabled />
+                                </Form.Item>
+                                <Form.Item label="Color" name="color">
+                                    <Input disabled />
+                                </Form.Item>
+                                <Form.Item label="Motor" name="engine">
+                                    <Input disabled />
+                                </Form.Item>
+                                <Form.Item label="No. Matrícula" name="enrollment">
+                                    <Input disabled />
+                                </Form.Item>
+                            </>
+                        )}
 
 
-
-            {!isAdmin && (
-                <>
-                    <Form.Item label="Tipo de movilización" name="movilizationType" >
-                        <Select options={movilizationTypes} />
-                    </Form.Item>
-
-
-                    <Form.Item label="Para" name="to">
-                        <Select options={movilizationTos} />
-                    </Form.Item>
-
-
-                    <Form.Item label="Vigente de" name="validity">
-                        <Select options={movilizationValidities} />
-                    </Form.Item>
-                    <Typography.Text>Datos de Origen</Typography.Text>
-
-                    <Form.Item label="Lugar" name="emitPlace">
-                        <Input />
-                    </Form.Item>
-
-                    <Form.Item label="Fecha" name="emitDate">
-                        <DatePicker 
-                            onChange={handleStartDateChange}
-                            disabledDate={disabledDate} 
-                        />
-                    </Form.Item>
-
-                    <Form.Item label="Hora" name="emitHour">
-                        <DatePicker 
-                            picker="time"
-                            disabledHours={disabledHours}
-                            disabledMinutes={disabledMinutes}
-                            disabledSeconds={disabledSeconds} 
-                        />
-                    </Form.Item>
-
-
-                    <Typography.Text>Datos de Destino</Typography.Text>
-
-                    <Form.Item label="Lugar" name="expiryPlace">
-                        <Input />
-                    </Form.Item>
-
-                    <Form.Item label="Fecha" name="expiryDate">
-                        <DatePicker disabledDate={disabledEndDate}  />
-                    </Form.Item>
-
-                    <Form.Item label="Hora" name="expiryHour">
-                        <DatePicker 
-                            picker="time" 
-                            disabledHours={disabledHours}
-                            disabledMinutes={disabledMinutes}
-                            disabledSeconds={disabledSeconds} 
-                        />
-                    </Form.Item>
+                        {selectedRequest && (
+                            <MovilizationLogs requestId={selectedRequest.id} />
+                        )}
+                    </>
+                )}
 
 
 
-                </>
-            )}
+                {!isAdmin && (
+                    <>
+                        <Form.Item label="Tipo de movilización" name="movilizationType" >
+                            <Select options={movilizationTypes} />
+                        </Form.Item>
+
+
+                        <Form.Item label="Para" name="to">
+                            <Select options={movilizationTos} />
+                        </Form.Item>
+
+
+                        <Form.Item label="Vigente de" name="validity">
+                            <Select options={movilizationValidities} />
+                        </Form.Item>
+                        <Typography.Text>Datos de Origen</Typography.Text>
+
+                        <Form.Item label="Lugar" name="emitPlace">
+                            <Input />
+                        </Form.Item>
+
+                        <Form.Item label="Fecha" name="emitDate">
+                            <DatePicker
+                                onChange={handleStartDateChange}
+                                disabledDate={disabledDate}
+                            />
+                        </Form.Item>
+
+                        <Form.Item label="Hora" name="emitHour">
+                            <DatePicker
+                                picker="time"
+                                disabledHours={disabledHours}
+                                disabledMinutes={disabledMinutes}
+                                disabledSeconds={disabledSeconds}
+                            />
+                        </Form.Item>
+
+
+                        <Typography.Text>Datos de Destino</Typography.Text>
+
+                        <Form.Item label="Lugar" name="expiryPlace">
+                            <Input />
+                        </Form.Item>
+
+                        <Form.Item label="Fecha" name="expiryDate">
+                            <DatePicker disabledDate={disabledEndDate} />
+                        </Form.Item>
+
+                        <Form.Item label="Hora" name="expiryHour">
+                            <DatePicker
+                                picker="time"
+                                disabledHours={disabledHours}
+                                disabledMinutes={disabledMinutes}
+                                disabledSeconds={disabledSeconds}
+                            />
+                        </Form.Item>
 
 
 
-            <Modal open={showDriversModal} footer={null} title="Máster de Conductores" onCancel={handleDriversModal}>
-                <DriversSelector setSomeValues={setSomeValues} handleDriversModal={handleDriversModal} drivers={drivers} />
-            </Modal>
+                    </>
+                )}
 
-            <Modal open={showCarsModal} footer={null} title="Vehículos" onCancel={handleCarsModal}>
-                <CarsSelector setSomeValues={setSomeValues} handleCarsModal={handleCarsModal} vehicles={vehicles} />
-            </Modal>
 
-            <Row justify="end">
-                <Button htmlType="submit" type="primary" loading={submitting}>Guardar</Button>
-            </Row>
-        </Form>
+
+                <Modal open={showDriversModal} footer={null} title="Máster de Conductores" onCancel={handleDriversModal}>
+                    <DriversSelector setSomeValues={setSomeValues} handleDriversModal={handleDriversModal} drivers={drivers} />
+                </Modal>
+
+                <Modal open={showCarsModal} footer={null} title="Vehículos" onCancel={handleCarsModal}>
+                    <CarsSelector setSomeValues={setSomeValues} handleCarsModal={handleCarsModal} vehicles={vehicles} />
+                </Modal>
+
+                <Row justify="end">
+                    <Button htmlType="submit" type="primary" loading={submitting}>Guardar</Button>
+                </Row>
+            </Form>
+        </>
     )
 }
 
