@@ -253,7 +253,7 @@ function MovilizationRequestForm({ selectedRequest, handleModal, handleRefresh, 
 
     }
 
-    const isAdmin = user.roles[0].name !== "CLIENTE" ? true : false
+    const isAdmin = user.role.id !== 2 ? true : false
 
     console.log('s', selectedRequest)
 

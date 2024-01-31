@@ -8,7 +8,11 @@ const defaultRules = [{ required: true, message: 'Información requerida' }]
 function UserForm({ handleModal, handleRefresh }: any) {
 
     const handleFinish = async (values: any) => {
-        const request = await postData('api/users', values)
+        const fullData = {
+            ...values,
+            role: { id: 2 },
+        }
+        const request = await postData('api/users', fullData)
 
         if ('name' in request) {
             message.success("Usuario creado exitosamente")

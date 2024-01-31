@@ -39,7 +39,7 @@ const medioComunicacion = [
 const RegisterNoticiasForm = () => {
     const [form] = Form.useForm()
     const [submitting, setSubmitting] = useState(false)
-    const [opinions, setOpinions] = useState([]);
+    const [opinions, setOpinions] = useState<any>([]);
     const [fileList, setFileList] = useState<UploadFile[]>([])
 
     const [data, setData] = useState<any>([])

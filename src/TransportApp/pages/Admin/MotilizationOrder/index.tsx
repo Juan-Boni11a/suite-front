@@ -89,7 +89,7 @@ const MovilizationOrderPage = () => {
 
     const { user }: any = useContext(AuthContext)
 
-    const isAdmin = user.roles[0].name !== "CLIENTE" ? true : false
+    const isAdmin = user.role.id !== 2 ? true : false
 
     async function initialRequest() {
         setLoading(true)

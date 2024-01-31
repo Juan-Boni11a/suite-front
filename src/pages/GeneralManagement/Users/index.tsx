@@ -3,12 +3,17 @@ import { useEffect, useState } from "react";
 import { getData } from "../../../services/common/getData";
 import UserForm from "../../../components/Forms/UserForm";
 import RoleAssignmentForm from "../../../components/Forms/RoleAssignmentForm";
+import * as dayjs from 'dayjs'
+import 'dayjs/locale/es'
+import { useNavigate } from "react-router-dom";
 
+dayjs.locale('es')
 
 
 
 function UsersPage() {
-
+    const navigate = useNavigate();
+    
     const [users, setUsers] = useState([])
     const [loading, setLoading] = useState(false)
 
@@ -70,10 +75,11 @@ function UsersPage() {
             key: 'X',
             render: (record: any) => (
                 <Button type="primary" onClick={() => {
+                    console.log('r', record)
                     setSelectedUser(record)
                     handleRoleModal(record)
                 }}>
-                    Asignar roles
+                    Asignar rol
                 </Button>
             )
         }
@@ -88,14 +94,24 @@ function UsersPage() {
         }
 
         if (typeof record !== "undefined") {
-            const currentRoles = 'roles' in record ? record.roles.map((r: any) => r.id) : []
-            roleForm.setFieldValue('roles', currentRoles)
+            console.log('record', record)
+            if('role' in record){
+                const roleValue = record.role !== null ? record.role.id : undefined
+                roleForm.setFieldValue('roles', roleValue)
+
+                if(roleValue===3){
+                    roleForm.setFieldValue('licenceExpiryDate', dayjs(record.licenceExpiryDate))
+                    roleForm.setFieldValue('licenseType', record.licenceExpiryDate)
+                }
+            }
         }
 
         setOpenRoleAssigmentModal(!openRoleAssignmentModal)
     }
 
     return (
+        <>
+        <Button onClick={() => navigate("/selection")} type="primary" style={{ marginBottom: 12 }}>Volver</Button>
         <Card title="Usuarios" extra={<Button onClick={handleModal} type="primary">Agregar</Button>} >
             <Table columns={columns} dataSource={users} loading={loading} pagination={{ pageSize: 20 }} />
             <Modal open={openModal} title="Usuario" onCancel={handleModal} footer={null}>
@@ -107,6 +123,7 @@ function UsersPage() {
             </Modal>
 
         </Card>
+        </>
     )
 
 }

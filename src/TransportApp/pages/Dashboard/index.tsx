@@ -57,14 +57,14 @@ function Dashboard() {
 
     async function initialRequest() {
 
-        
+
 
         const requestAllVehicles = await getData('api/vehicles/busy')
-        
-        if('freeVehicles' in requestAllVehicles){
-            const {busyVehicles, freeVehicles} = requestAllVehicles 
+
+        if ('freeVehicles' in requestAllVehicles) {
+            const { busyVehicles, freeVehicles } = requestAllVehicles
             const totalVehicles = busyVehicles.length + freeVehicles.length
-            
+
             let busyVehiclesAverage = (busyVehicles.length / totalVehicles) * 100
 
             let freeVehiclesAverage = (freeVehicles.length / totalVehicles) * 100
@@ -80,15 +80,15 @@ function Dashboard() {
                 ]
             })
 
-            setLoadingVdata(false)  
+            setLoadingVdata(false)
         }
 
 
 
         const requestAllDrivers = await getData('api/users/busyDrivers')
-        
-        if('freeDrivers' in requestAllDrivers){
-            const {busyDrivers, freeDrivers} = requestAllDrivers 
+        console.log('request all', requestAllDrivers)
+        if ('freeDrivers' in requestAllDrivers) {
+            const { busyDrivers, freeDrivers } = requestAllDrivers
             const totalDrivers = busyDrivers.length + freeDrivers.length
             let busyDriversAverage = (busyDrivers.length / totalDrivers) * 100
 
@@ -105,26 +105,35 @@ function Dashboard() {
                 ]
             })
 
-            setLoadingDdata(false)  
+            setLoadingDdata(false)
         }
 
         const requestDriversInMovilization = await getData('api/users/driversInMovilization')
-        if (Array.isArray(requestDriversInMovilization[0])) {
+        console.log('request dim', requestDriversInMovilization)
+        if (Array.isArray(requestDriversInMovilization) && requestDriversInMovilization.length > 0) {
 
-            let objetosCombinados = [];
+            if (Array.isArray(requestDriversInMovilization[0])) {
 
-            for (let i = 0; i < requestDriversInMovilization[0].length; i += 2) {
-                if (i + 1 < requestDriversInMovilization[0].length) {
-                    let objetoCombinado = { ...requestDriversInMovilization[0][i], ...requestDriversInMovilization[0][i + 1] };
-                    objetosCombinados.push(objetoCombinado);
-                } else {
-                    // Si hay un número impar de objetos, el último objeto se agrega sin combinar
-                    objetosCombinados.push(requestDriversInMovilization[0][i]);
+                let objetosCombinados = [];
+
+                for (let i = 0; i < requestDriversInMovilization[0].length; i += 2) {
+                    if (i + 1 < requestDriversInMovilization[0].length) {
+                        let objetoCombinado = { ...requestDriversInMovilization[0][i], ...requestDriversInMovilization[0][i + 1] };
+                        objetosCombinados.push(objetoCombinado);
+                    } else {
+                        // Si hay un número impar de objetos, el último objeto se agrega sin combinar
+                        objetosCombinados.push(requestDriversInMovilization[0][i]);
+                    }
                 }
+
+                console.log('objetos combinados', objetosCombinados)
+                setDriversInMovilization(objetosCombinados)
+                setLoadingDriversInMovilization(false)
+            }else{
+                setLoadingDriversInMovilization(false)
             }
 
-            console.log('objetos combinados', objetosCombinados)
-            setDriversInMovilization(objetosCombinados)
+        }else{
             setLoadingDriversInMovilization(false)
         }
 

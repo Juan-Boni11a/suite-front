@@ -23,12 +23,7 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
 
     console.log('user', user)
 
-    // const isSuperAdmin = user.roles.filter((role: any) => role.id === 1)
-    //const isSuperAdmin = {email: '1'}
-
-    // console.log(isSuperAdmin);
-    const isSuperAdmin = user.roles.filter((role: any) => role.id === 1)
-
+    const isAdmin = user.role.id !== 2 ? true : false
 
 
     const goToPage = (page: string) => {
@@ -49,7 +44,7 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
                 Inicio
             </Menu.Item>
             {
-                isSuperAdmin.length > 0 && (
+                isAdmin && (
 
                     <Menu.Item
                         key="0"

@@ -11,8 +11,8 @@ function SelectionPage() {
   const navigate = useNavigate();
 
   const { user }: any = useContext(AuthContext)
-
-  const isAdmin = user.roles[0].name !== "CLIENTE" ? true : false
+  console.log('user', user)
+  const isAdmin = user.role.id !== 2 ? true : false
 
 
   const apps = [

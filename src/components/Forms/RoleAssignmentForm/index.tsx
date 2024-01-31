@@ -13,34 +13,45 @@ const defaultRules = [{ required: true, message: 'Información requerida' }]
 function RoleAssignmentForm({ selectedUser, handleModal, handleRefresh, roleForm }: any) {
 
 
-    const [selectedRoles, setSelectedRoles] = useState<any>([])
-
     const [roles, setRoles] = useState<any>([])
-
-    const handleSelectRole = (value: any) => {
-        console.log('value', value)
-
-        setSelectedRoles([])
-
-        let sr: any = []
-        value.map((roleId: any) => {
-            roles.map((role: any) => {
-                if (role.value === roleId) {
-                    sr.push(role)
-                }
-            })
-        })
-
-        console.log('sr', sr)
-
-        if (sr.length > 0) {
-            setSelectedRoles(sr)
-        }
-    }
 
 
     const handleFinish = async (values: any) => {
+        console.log('values', values)
 
+        const roleId = values.roles
+        const userId = selectedUser.id
+
+        if (roleId === 3) {
+            const request = await putData('api/users/' + selectedUser.id + '/driver', {
+                licenseType: values.licenseType,
+                licenceExpiryDate: transformDate(values.licenceExpiryDate)
+            })
+
+            console.log('request', request)
+
+            if ('role' in request) {
+                message.success("Rol asignado exitosamente")
+                handleModal()
+                handleRefresh()
+            } else {
+                message.error("Algo salió mal")
+            }
+
+            return
+        }
+
+        const request = await postData(`api/users/${userId}/roles/${roleId}`, {})
+        if ('role' in request) {
+            message.success("Rol asignado exitosamente")
+            handleModal()
+            handleRefresh()
+            return 
+        }
+
+        message.error("Algo salió mal")
+
+        /*
         const currentRoleIds = selectedUser.roles.map((role: any) => role.id)
 
         values.roles.forEach(async (roleId: any) => {
@@ -62,6 +73,7 @@ function RoleAssignmentForm({ selectedUser, handleModal, handleRefresh, roleForm
 
         handleModal()
         handleRefresh()
+        */
     }
 
 
@@ -93,19 +105,23 @@ function RoleAssignmentForm({ selectedUser, handleModal, handleRefresh, roleForm
         return current && dayjs(current).isBefore(dayjs(), 'day');
     };
 
+    const roleValue = Form.useWatch('roles', roleForm);
+
+    
+
     return (
         <>
             <Typography.Text style={{ paddingBottom: 24 }}>Usuario Seleccionado: {selectedUser.name} {" "} {selectedUser.lastname} </Typography.Text>
             <Form onFinish={handleFinish} form={roleForm}>
                 <Row>
                     <Col span={10}>
-                        <Form.Item label="Roles" name="roles" extra="Seleccione los roles que desea asignar al usuario">
-                            <Select mode="multiple" options={roles} onChange={handleSelectRole} />
+                        <Form.Item label="Roles" name="roles" extra="Seleccione el rol que desea asignar al usuario">
+                            <Select options={roles} />
                         </Form.Item>
                     </Col>
 
                     <Col span={12} offset={2}>
-                        {selectedRoles.map((selectedRole: any, index: any) =>
+                        {roles.filter((role:any) => role.value === roleValue).map((selectedRole: any, index: any) =>
                             <div key={index} style={{ paddingBottom: 12 }} >
                                 <Typography.Text>*{selectedRole.label}</Typography.Text>
                                 {selectedRole.permissions.map((permisson: any, index: any) => (
@@ -116,8 +132,9 @@ function RoleAssignmentForm({ selectedUser, handleModal, handleRefresh, roleForm
                     </Col>
                 </Row>
 
+
                 {
-                    selectedRoles.filter((sr: any) => sr.id === 3).length > 0 && (
+                    roleValue === 3 && (
                         <Row>
 
                             <Col span={10} offset={1}>

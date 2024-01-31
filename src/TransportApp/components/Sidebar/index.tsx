@@ -22,7 +22,7 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
     const { user }: any = useContext(AuthContext)
     console.log('user', user)
 
-    const isSuperAdmin = user.roles.filter((role: any) => role.id === 1)
+    const isAdmin = user.role.id !== 2 ? true : false
 
 
     const goToPage = (page: string) => {
@@ -44,7 +44,7 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
                     Inicio
                 </Menu.Item>
                 {
-                    isSuperAdmin.length > 0 && (
+                    isAdmin && (
 
                         <Menu.Item
                             key="0"
@@ -65,7 +65,7 @@ const MenuOptions = ({ theme = "dark", closeModal = () => console.log('Default c
             </>
 
             {
-                isSuperAdmin.length > 0 && (
+                isAdmin && (
                     <>
 
                         <Menu.Item
@@ -192,7 +192,7 @@ export const SideBar = ({ children }: any) => {
 
     console.log('user', user)
 
-    const isAdmin = user.roles[0].name !== "CLIENTE" ? true : false
+    const isAdmin = user.role.id !== 2 ? true : false
 
     return (
         <>
