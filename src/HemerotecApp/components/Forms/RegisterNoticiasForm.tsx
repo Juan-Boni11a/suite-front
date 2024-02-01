@@ -449,7 +449,7 @@ const RegisterNoticiasForm = () => {
                 open={showDetails}
                 title="Noticia"
                 footer={null}
-                width={"40%"}
+                width={"70%"}
                 onCancel={() => {
                     setSelectedRecord({})
                     setShowDetails(false)

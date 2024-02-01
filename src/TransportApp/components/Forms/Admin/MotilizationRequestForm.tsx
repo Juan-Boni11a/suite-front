@@ -307,9 +307,12 @@ function MovilizationRequestForm({ selectedRequest, handleModal, handleRefresh, 
 
     return (
         <>
-            <div style={{ marginTop: 30, marginBottom: 30}}>
-            <MovilizationDetails movilization={selectedRequest} />
-            </div>
+            {selectedRequest && 
+            (
+                <div style={{ marginTop: 30, marginBottom: 30}}>
+                <MovilizationDetails movilization={selectedRequest} />
+                </div>
+            )}
             <Form form={form} onFinish={handleSubmit} >
                 {isAdmin && (
                     <>
