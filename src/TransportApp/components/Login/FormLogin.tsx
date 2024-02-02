@@ -67,7 +67,7 @@ export const FormLogin = () => {
                     label="Password"
                     name="password"
                     rules={[{ required: true, message: 'Por favor ingrese su contraseña!' }]}
-                    extra={<a onClick={() => navigate("/forget-password")}>Olvidé mi contraseña</a>}
+                    extra={<a onClick={() => navigate("/forget-password")}></a>}
                 >
                     <Input.Password />
                 </Form.Item>
